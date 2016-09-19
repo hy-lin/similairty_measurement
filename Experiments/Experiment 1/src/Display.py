@@ -32,15 +32,14 @@ class Display(object):
         
         self.fps = sdl2.sdlgfx.FPSManager()
         sdl2.sdlgfx.SDL_initFramerate(self.fps)
-        self.window = sdl2.ext.Window('Recall and Recognition, Exp 1', (1280, 760), flags = sdl2.SDL_WINDOW_FULLSCREEN_DESKTOP)
+        self.window = sdl2.ext.Window('Recognition and Source Recall', (1280, 720), flags = sdl2.SDL_WINDOW_FULLSCREEN_DESKTOP)
         self.window_surface = self.window.get_surface()
         self.renderer = sdl2.ext.Renderer(self.window_surface)
-
         
         self.t0 = sdl2.timer.SDL_GetTicks()
         
         sdl2.sdlttf.TTF_Init()
-        self.font = sdl2.sdlttf.TTF_OpenFont(self.RESOURCES.get_path('one47.ttf'), int(20*self.scale))
+        self.font = None
         
         self.running = True
         
@@ -55,82 +54,57 @@ class Display(object):
         
         return (x0, y0, x1, y1)
     
-    def drawThickFrame(self, x0, y0, x1, y1, thickness, color):
-        sdl2.sdlgfx.thickLineColor(self.renderer.renderer, x0, y0, x1, y0, thickness, color)
-        sdl2.sdlgfx.thickLineColor(self.renderer.renderer, x0, y0, x0, y1, thickness, color)
-        sdl2.sdlgfx.thickLineColor(self.renderer.renderer, x0, y0, x1, y0, thickness, color)
-        sdl2.sdlgfx.thickLineColor(self.renderer.renderer, x0, y0, x1, y0, thickness, color)
+    def clear(self, refresh = False):
+        self.renderer.clear(sdl2.ext.Color(200, 200, 200))
+        if refresh:
+            self.refresh()
         
-    
-class Color_Lab(object):
-    def __init__(self, L, a, b):
-        self.L = L
-        self.a = a
-        self.b = b
+    def refresh(self):
+        self.renderer.present()
+        self.window.refresh()
         
-    def toRGB(self):
-        varY = (self.L + 16) / 115.0
-        varX = self.a / 500.0 + varY
-        varZ = varY - self.b / 200.0
-        
-        varX = self._filter_threshold(varX)
-        varY = self._filter_threshold(varY)
-        varZ = self._filter_threshold(varZ)
-        
-        refX =  95.047
-        refY = 100.000
-        refZ = 108.883
-        
-        X = refX * varX / 100
-        Y = refY * varY / 100
-        Z = refZ * varZ / 100
-        
-        varR = X * 3.2406 + Y * (-1.5374) + Z * (-0.4986)
-        varG = X * (-0.9689) + Y * 1.8758 + Z * 0.0415
-        varB = X * 0.0557 + Y * (-0.2040) + Z * 1.0570
-        
-        R = self._gamma_correction(varR) * 255
-        G = self._gamma_correction(varG) * 255
-        B = self._gamma_correction(varB) * 255
-        
-        R = self._trimming(R)
-        G = self._trimming(G)
-        B = self._trimming(B)
-        
-        return sdl2.ext.Color(R, G, B)
-    
-    def _gamma_correction(self, rgb):
-        '''
-        Gamma correction for IEC 61966-2-1 standard
-        '''
-        if rgb > 0.0031308:
-            return 1.055 * (numpy.power(rgb, (1.0/2.4))) - 0.055
-        else:
-            return 12.92 * rgb
-    
-    def _filter_threshold(self, xyz):
-        if numpy.power(xyz, 3.0) > 0.008856:
-            return numpy.power(xyz, 3.0)
-        else:
-            return (xyz - 16.0/116.0) / 7.787
-        
-    def _trimming(self, rgb):
-        if rgb > 255:
-            rgb = 255
-        elif rgb < 0:
-            rgb = 0
+    def wait(self, ms):
+        t0 = sdl2.timer.SDL_GetTicks()
+        while sdl2.timer.SDL_GetTicks()-t0 < ms:
+            sdl2.ext.get_events()
             
-        return rgb
+    def waitFPS(self):
+        sdl2.sdlgfx.SDL_framerateDelay(self.fps)
     
-    def fromRGB(self):
-        print 'Warnning: function Lab_Color.fromRGB has not been implemented yet.'
-        pass
-
-def angle2RGB(ang, Lab_center, radius):
-    theta = ang * 2.0 * numpy.pi / 360.0
-    a = Lab_center.a + radius * numpy.cos(theta)
-    b = Lab_center.b + radius * numpy.sin(theta)
-    L = Lab_center.L
+    def drawThickLine(self, x0, y0, x1, y1, thickness, color):
+        x0, y0, x1, y1, thickness = int(x0), int(y0), int(x1), int(y1), int(thickness)
+        sdl2.sdlgfx.thickLineRGBA(self.renderer.renderer, x0, y0, x1, y1, thickness, color.r, color.g, color.b, color.a)
     
-    Lab_color = Color_Lab(L, a, b)
-    return Lab_color.toRGB()
+    def drawThickFrame(self, x0, y0, x1, y1, thickness, color = sdl2.ext.Color(0, 0, 0)):
+        x0, y0, x1, y1, thickness, mergin = int(x0), int(y0), int(x1), int(y1), int(thickness), int(thickness/2)
+        x0, y0, x1, y1 = x0-mergin, y0-mergin, x1+mergin, y1+mergin
+        sdl2.sdlgfx.thickLineRGBA(self.renderer.renderer, x0, y0, x1, y0, thickness, color.r, color.g, color.b, color.a)
+        sdl2.sdlgfx.thickLineRGBA(self.renderer.renderer, x0, y0, x0, y1, thickness, color.r, color.g, color.b, color.a)
+        sdl2.sdlgfx.thickLineRGBA(self.renderer.renderer, x1, y0, x1, y1, thickness, color.r, color.g, color.b, color.a)
+        sdl2.sdlgfx.thickLineRGBA(self.renderer.renderer, x0, y1, x1, y1, thickness, color.r, color.g, color.b, color.a)
+        
+    def drawText(self, text, x = None, y = None, text_color = sdl2.SDL_Color(0, 0, 0), align = 'center-center'):
+        if self.font is None:
+            self.font = sdl2.sdlttf.TTF_OpenFont(self.RESOURCES.get_path('micross.ttf'), int(self.exp_parameters.font_size))
+            
+        if x is None:
+            x = self.window_surface.w/2
+        if y is None:
+            y = self.window_surface.h/2
+        msg = sdl2.sdlttf.TTF_RenderText_Solid(self.font, text, text_color)
+        
+        if align == 'center-center':
+            msg_rect = sdl2.SDL_Rect(int(x-msg.contents.w/2), int(y-msg.contents.h/2), msg.contents.w, msg.contents.h)
+        elif align == 'top-left':
+            msg_rect = sdl2.SDL_Rect(x, y, msg.contents.w, msg.contents.h)
+        elif align == 'top-right':
+            msg_rect = sdl2.SDL_Rect(x-msg.contents.w, y, msg.contents.w, msg.contents.h)
+        elif align == 'center-left':
+            msg_rect = sdl2.SDL_Rect(x, int(y-msg.contents.h/2), msg.contents.w, msg.contents.h)
+        elif align == 'center-right':
+            msg_rect = sdl2.SDL_Rect(x-msg.contents.w, int(y-msg.contents.h/2), msg.contents.w, msg.contents.h)
+            
+        sdl2.surface.SDL_BlitSurface(msg.contents, None, self.window_surface, msg_rect)
+        sdl2.SDL_FreeSurface(msg)
+        
+    def drawSurface(self):

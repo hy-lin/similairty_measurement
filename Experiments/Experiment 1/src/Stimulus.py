@@ -65,7 +65,7 @@ class ReedFace(object):
         sdl2.surface.SDL_SetColorKey(self.surface, sdl2.SDL_TRUE, sdl2.pixels.SDL_MapRGB(self.surface.format, 0, 0, 0))
 #         sdl2.surface.SDL_SetSurfaceBlendMode(self.surface, sdl2.SDL_BLENDMODE_MOD)
 
-        sdl2.surface.SDL_SetSurfaceColorMod(self.surface, 255, 255, 0)
+        sdl2.surface.SDL_SetSurfaceColorMod(self.surface, 255, 255, 255)
         
     def draw(self, dst_surface):
         if self.surface is None or self.disp_info is None:
