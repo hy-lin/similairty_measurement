@@ -30,11 +30,15 @@ class Display(object):
         
         sdl2.ext.init()
         
-        self.fps = sdl2.sdlgfx.FPSManager()
+        self.fps = sdl2.sdlgfx.FPSManager(29)
         sdl2.sdlgfx.SDL_initFramerate(self.fps)
         self.window = sdl2.ext.Window('Recognition and Source Recall', (1280, 720), flags = sdl2.SDL_WINDOW_FULLSCREEN_DESKTOP)
         self.window_surface = self.window.get_surface()
         self.renderer = sdl2.ext.Renderer(self.window_surface)
+        scale = (2.0, 2.0)
+        sdl2.render.SDL_RenderSetScale(self.renderer.renderer, 1.0, 1.0)
+        self.renderer.scale = scale
+        print(self.renderer.scale)
         
         self.t0 = sdl2.timer.SDL_GetTicks()
         
@@ -107,4 +111,6 @@ class Display(object):
         sdl2.surface.SDL_BlitSurface(msg.contents, None, self.window_surface, msg_rect)
         sdl2.SDL_FreeSurface(msg)
         
-    def drawSurface(self):
+    def drawSurface(self, src_surface, dst_rect):
+        sdl2.surface.SDL_BlitSurface(src_surface, None, self.window_surface, dst_rect)
+

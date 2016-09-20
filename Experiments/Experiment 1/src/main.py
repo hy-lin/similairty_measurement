@@ -14,8 +14,32 @@ import sdl2.sdlttf
 import Stimulus
 import random
 import sdl2
+import Display
 
 sdl2.ext.get_image_formats()
+
+def _main2():
+    dummy_exp_parms = None
+    RESOURCES = sdl2.ext.Resources('.', 'resources')
+    main_display = Display.Display(RESOURCES, dummy_exp_parms)
+    
+    faces_surface = sdl2.ext.load_image(RESOURCES.get_path('faces.png'))
+    
+    running = True
+    
+    while running:
+        main_display.clear(False)
+        
+        reed_face_parameters = (random.randint(1, 3), random.randint(1, 3), random.randint(1, 3), random.randint(1, 3))
+        random_face = Stimulus.ReedFace(reed_face_parameters)
+        x = random.randint(1, 1280)
+        y = random.randint(1, 1024)
+        random_face.attachDisplayParameters(Stimulus.DisplayParameters(30, 30, (120, 180)))
+        random_face.updateFaceSurface(faces_surface)
+        
+        random_face.draw(main_display)
+        main_display.refresh()
+        main_display.waitFPS()
 
 def _main():
     sdl2.ext.init()
@@ -44,7 +68,6 @@ def _main():
         
     faces_surface = sdl2.ext.load_image(RESOURCES.get_path('faces.png'))
 #     sdl2.surface.SDL_SetColorKey(faces_surface, sdl2.SDL_TRUE, sdl2.ext.Color(0, 0, 0))
-    face = sdl2.ext.subsurface(faces_surface, (0, 0, 160, 240))
     
     print(type(renderer.renderer))
 #     dst_rect = sdl2.rect(0, 0, 180, 240)
@@ -93,4 +116,4 @@ def _main():
 
 
 if __name__ == '__main__':
-    _main()
+    _main2()

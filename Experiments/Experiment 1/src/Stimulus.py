@@ -19,6 +19,11 @@ class DisplayParameters(object):
         self.y = y
         self.size = size
         
+        self.x0 = int(self.x - self.size[0]/2)
+        self.x1 = int(self.x + self.size[0]/2)
+        self.y0 = int(self.y - self.size[1]/2)
+        self.y1 = int(self.y + self.size[1]/2)
+        
     def getRect(self):
         x0 = int(self.x - self.size[0]/2)
         x1 = int(self.x + self.size[0]/2)
@@ -62,19 +67,17 @@ class ReedFace(object):
         rect = self._getFaceRect()
         self.surface = sdl2.ext.subsurface(faces_surface, rect)
         sdl2.surface.SDL_SetSurfaceBlendMode(self.surface, sdl2.SDL_BLENDMODE_NONE)
-        sdl2.surface.SDL_SetColorKey(self.surface, sdl2.SDL_TRUE, sdl2.pixels.SDL_MapRGB(self.surface.format, 0, 0, 0))
-#         sdl2.surface.SDL_SetSurfaceBlendMode(self.surface, sdl2.SDL_BLENDMODE_MOD)
+        sdl2.surface.SDL_SetColorKey(self.surface, sdl2.SDL_TRUE, sdl2.pixels.SDL_MapRGB(self.surface.format, 255, 255, 255))
 
-        sdl2.surface.SDL_SetSurfaceColorMod(self.surface, 255, 255, 255)
+        sdl2.surface.SDL_SetSurfaceColorMod(self.surface, 200, 200, 200)
         
-    def draw(self, dst_surface):
+    def draw(self, display):
         if self.surface is None or self.disp_info is None:
             return -1
-
-#         sdl2.surface.SDL_SetColorKey(dst_surface, sdl2.SDL_TRUE, sdl2.ext.Color(255, 255, 255))
-#         sdl2.surface.SDL_SetColorKey(self.surface, sdl2.SDL_FALSE, 0)
-#         sdl2.surface.SDL_SetSurfaceAlphaMod(self.surface, 0)
-#         sdl2.surface.SDL_ConvertSurface(self.surface)
-#         sdl2.SDL_SetSurfaceBlendMode(self.surface, sdl2.SDL_BLENDMODE_BLEND)
-#         sdl2.surface.SDL_SetSurfaceBlendMode(dst_surface, sdl2.SDL_BLENDMODE_BLEND)
-        sdl2.surface.SDL_BlitSurface(self.surface, None, dst_surface, self.disp_info.getRect())
+        
+        display.drawSurface(self.surface, self.disp_info.getRect())
+#         frame_rect = self.disp_info.getRect()
+        display.drawThickFrame(self.disp_info.x0, self.disp_info.y0, self.disp_info.x1, self.disp_info.y1, 5)
+        
+    def __del__(self):
+        sdl2.SDL_FreeSurface(self.surface)
