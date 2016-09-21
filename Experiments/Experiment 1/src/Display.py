@@ -34,11 +34,9 @@ class Display(object):
         sdl2.sdlgfx.SDL_initFramerate(self.fps)
         self.window = sdl2.ext.Window('Recognition and Source Recall', (1280, 720), flags = sdl2.SDL_WINDOW_FULLSCREEN_DESKTOP)
         self.window_surface = self.window.get_surface()
+        self.w = self.window_surface.w
+        self.h = self.window_surface.h
         self.renderer = sdl2.ext.Renderer(self.window_surface)
-        scale = (2.0, 2.0)
-        sdl2.render.SDL_RenderSetScale(self.renderer.renderer, 1.0, 1.0)
-        self.renderer.scale = scale
-        print(self.renderer.scale)
         
         self.t0 = sdl2.timer.SDL_GetTicks()
         

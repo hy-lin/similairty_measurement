@@ -8,37 +8,13 @@ import sdl2.ext
 import sdl2.surface
 import sdl2.pixels
 
-
-class DisplayParameters(object):
-    '''
-    The class for display parameters.
-    Class contains the coordinate the center of the stimulus and the size of the stimulus.  
-    '''
-    def __init__(self, x, y, size):
-        self.x = x
-        self.y = y
-        self.size = size
-        
-        self.x0 = int(self.x - self.size[0]/2)
-        self.x1 = int(self.x + self.size[0]/2)
-        self.y0 = int(self.y - self.size[1]/2)
-        self.y1 = int(self.y + self.size[1]/2)
-        
-    def getRect(self):
-        x0 = int(self.x - self.size[0]/2)
-        x1 = int(self.x + self.size[0]/2)
-        y0 = int(self.y - self.size[1]/2)
-        y1 = int(self.y + self.size[1]/2)
-
-        return sdl2.SDL_Rect(x0, y0, self.size[0], self.size[1])
-
 class ReedFace(object):
     '''
     classdocs
     '''
 
 
-    def __init__(self, face_parameters):
+    def __init__(self, face_parameters, x, y):
         '''
         Constructor
         '''
@@ -46,15 +22,17 @@ class ReedFace(object):
         
         self.surface = None
         self.disp_info = None
+        self.x = x
+        self.y = y
+        
+        self.rect = None
         
     def _mapParameters(self, face_parameters):
         self.eyes_gap = face_parameters[0]
         self.eyes_position = face_parameters[1]
         self.nose_length = face_parameters[2]
         self.mouth_position = face_parameters[3]
-        
-    def attachDisplayParameters(self, display_parameters):
-        self.disp_info = display_parameters
+
         
     def _getFaceRect(self):
         w, h = 160, 240
@@ -70,14 +48,21 @@ class ReedFace(object):
         sdl2.surface.SDL_SetColorKey(self.surface, sdl2.SDL_TRUE, sdl2.pixels.SDL_MapRGB(self.surface.format, 255, 255, 255))
 
         sdl2.surface.SDL_SetSurfaceColorMod(self.surface, 200, 200, 200)
+        self.rect = sdl2.SDL_Rect(int(self.x - self.surface.w/2), \
+                                  int(self.y - self.surface.h/2), \
+                                  int(self.surface.w), \
+                                  int(self.surface.h))
         
     def draw(self, display):
-        if self.surface is None or self.disp_info is None:
+        if self.surface is None :
             return -1
         
-        display.drawSurface(self.surface, self.disp_info.getRect())
-#         frame_rect = self.disp_info.getRect()
-        display.drawThickFrame(self.disp_info.x0, self.disp_info.y0, self.disp_info.x1, self.disp_info.y1, 5)
+        display.drawSurface(self.surface, self.rect)
+        display.drawThickFrame(self.x - self.surface.w/2, \
+                               self.y - self.surface.h/2, \
+                               self.x + self.surface.w/2, \
+                               self.y + self.surface.h/2, \
+                               5)
         
     def __del__(self):
         sdl2.SDL_FreeSurface(self.surface)

@@ -26,20 +26,25 @@ def _main2():
     faces_surface = sdl2.ext.load_image(RESOURCES.get_path('faces.png'))
     
     running = True
+    t0 = sdl2.timer.SDL_GetTicks()
     
     while running:
         main_display.clear(False)
         
         reed_face_parameters = (random.randint(1, 3), random.randint(1, 3), random.randint(1, 3), random.randint(1, 3))
-        random_face = Stimulus.ReedFace(reed_face_parameters)
-        x = random.randint(1, 1280)
-        y = random.randint(1, 1024)
-        random_face.attachDisplayParameters(Stimulus.DisplayParameters(30, 30, (120, 180)))
+        x = random.randint(1, main_display.w)
+        y = random.randint(1, main_display.h)
+        random_face = Stimulus.ReedFace(reed_face_parameters, x, y)
+
         random_face.updateFaceSurface(faces_surface)
         
         random_face.draw(main_display)
         main_display.refresh()
         main_display.waitFPS()
+        
+        if sdl2.timer.SDL_GetTicks() - t0 > 15000:
+            running = False
+            
 
 def _main():
     sdl2.ext.init()
