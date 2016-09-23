@@ -74,7 +74,9 @@ class ReedFace(object):
         if self.surface is None :
             return -1
         
+        self.updateRect()
         display.drawSurface(self.surface, self.sdl_rect)
+        
         if self.selecting_mode == 'mouse_over':
             display.drawThickFrame(self.x - self.surface.w/2, \
                                    self.y - self.surface.h/2, \

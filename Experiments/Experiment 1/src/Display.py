@@ -30,9 +30,10 @@ class Display(object):
         
         sdl2.ext.init()
         
-        self.fps = sdl2.sdlgfx.FPSManager(29)
+        self.fps = sdl2.sdlgfx.FPSManager()
         sdl2.sdlgfx.SDL_initFramerate(self.fps)
-        self.window = sdl2.ext.Window('Recognition and Source Recall', (1280, 720), flags = sdl2.SDL_WINDOW_FULLSCREEN_DESKTOP)
+        sdl2.sdlgfx.SDL_setFramerate(self.fps, 100)
+        self.window = sdl2.ext.Window('Similarity Measurement Exp. 1', (1280, 720), flags = sdl2.SDL_WINDOW_FULLSCREEN_DESKTOP)
         self.window_surface = self.window.get_surface()
         self.w = self.window_surface.w
         self.h = self.window_surface.h
