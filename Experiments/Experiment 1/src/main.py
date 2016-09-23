@@ -76,10 +76,12 @@ def _main2():
             
             face.draw(main_display)
         
-        print(sdl2.timer.SDL_GetTicks() - frame_t0)
+        computing_ticks = sdl2.timer.SDL_GetTicks() - frame_t0
         main_display.waitFPS()
         main_display.refresh()
-        print(sdl2.timer.SDL_GetTicks() - frame_t0)
+        display_interval = sdl2.timer.SDL_GetTicks() - frame_t0
+        
+        print(computing_ticks, display_interval)
 
         x0, y0, = x1, y1
         
