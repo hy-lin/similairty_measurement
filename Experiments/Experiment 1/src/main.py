@@ -67,7 +67,7 @@ def _main2():
             elif face.isMouseOver(x1, y1) and button == 'left_up':
                 selected_stimulus = None
                 mouse_overed = True
-            elif face.isMouseOver(x1, y1) and selected_stimulus is not face and not mouse_overed:
+            elif face.isMouseOver(x1, y1) and selected_stimulus is None and not mouse_overed:
                 face.selecting_mode = 'mouse_over'
                 mouse_overed = True
             else:
