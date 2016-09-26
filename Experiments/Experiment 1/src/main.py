@@ -60,7 +60,7 @@ def _main2():
         mouse_overed = False
         for face in faces:
             
-            if face.isMouseOver(x1, y1) and button == 'left_down':
+            if face.isMouseOver(x1, y1) and button == 'left_down' and not mouse_overed:
                 face.selecting_mode = 'selecting'
                 selected_stimulus = face
                 mouse_overed = True
