@@ -7,6 +7,7 @@ import sdl2
 import sdl2.ext
 import sdl2.surface
 import sdl2.pixels
+import numpy.random
 
 class ReedFace(object):
     '''
@@ -69,6 +70,21 @@ class ReedFace(object):
             return True
         
         return False
+    
+    def isOverLapping(self, target):
+        if self.rect[0] <= target.rect[2] and \
+           self.rect[1] <= target.rect[3] and \
+           self.rect[2] >= target.rect[0] and \
+           self.rect[3] >= target.rect[1]:
+            return True
+        
+        return False
+    
+    def randomizePosition(self):
+        self.x = int(numpy.random.uniform(self.sdl_rect.w, 1024 - self.sdl_rect.w))
+        self.y = int(numpy.random.uniform(self.sdl_rect.h, 768 - self.sdl_rect.h))
+        
+        self.updateRect()
         
     def draw(self, display):
         if self.surface is None :

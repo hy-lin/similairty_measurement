@@ -26,13 +26,21 @@ class Recorder(object):
         self.exp_parameters = exp_parameters
         self.mouse_x = -1
         self.mouse_y = -1
+        self.events = []
+        self.last_update_tick = -1
+        
+        self.MINIMUM_EVENT_UPDATE_TICKS = 10
+        
+    def _updateEvents(self):
+        self.events = sdl2.ext.get_events()
+        self.last_update_tick = sdl2.timer.SDL_GetTicks()
         
     def getMouse(self):
+        if sdl2.timer.SDL_GetTicks() - self.last_update_tick >= self.MINIMUM_EVENT_UPDATE_TICKS:
+            self._updateEvents()
+            
         button = ''
-#         self.mouse_x, self.mouse_y = -1, -1
-
-        events = sdl2.ext.get_events()
-        for event in events:
+        for event in self.events:
             if event.type == sdl2.SDL_MOUSEMOTION:
                 self.mouse_x, self.mouse_y = event.motion.x, event.motion.y
             if event.type == sdl2.SDL_MOUSEBUTTONDOWN:
@@ -84,6 +92,23 @@ class Recorder(object):
         
     def showCursor(self):
         sdl2.mouse.SDL_ShowCursor(sdl2.SDL_ENABLE)
+        
+    def getKeyboard(self, acceptable_keys):
+        if sdl2.timer.SDL_GetTicks() - self.last_update_tick > self.MINIMUM_EVENT_UPDATE_TICKS:
+            self._updateEvents()
+        
+        for event in self.events:
+            if event.type == sdl2.SDL_KEYDOWN:
+                if event.key.keysym.sym == sdl2.SDLK_LEFT:
+                    pressed = 'left'
+                elif event.key.keysym.sym == sdl2.SDLK_RIGHT:
+                    pressed = 'right'
+                elif event.key.keysym.sym == sdl2.SDLK_SPACE:
+                    pressed = 'space'
+                else:
+                    pressed = sdl2.keyboard.SDL_GetKeyName(event.key.keysym.sym)
+                if pressed in acceptable_keys:
+                    return acceptable_keys.index(pressed)
     
     def recordKeyboard(self, acceptable_keys):
         running = True
