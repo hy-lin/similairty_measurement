@@ -3,6 +3,13 @@ Created on 26.09.2016
 
 @author: Hsuan-Yu Lin
 '''
+import os
+os.environ['PYSDL2_DLL_PATH'] = 'sdl_dll\\'
+
+import Display
+import Recorder
+import Stimulus
+
 import itertools
 import numpy.random
 import sdl2.ext
@@ -14,7 +21,7 @@ class ExpParameters(object):
     
     def __init__(self):
         
-        self.n_items = 10
+        self.n_items = 16
         self.items_per_multicomparison = 4
         
         pass
@@ -25,20 +32,22 @@ class MultiComparisonTrials(object):
         self.stimulus = []
         
     def setupStimulus(self, stimulus_pool):
-        for stimulus_index in self.stimulus_index:
-            self.stimulus.append(stimulus_pool[stimulus_index])
+        self.stimulus = list(range(len(self.stimulus_index)))
+        for i, stimulus_index in enumerate(self.stimulus_index):
+            self.stimulus[i] = stimulus_pool[stimulus_index]
+            print(self.stimulus[i], stimulus_index)
             
     def run(self, display, recorder):
-        self._resetStimulusPosition()
-        self._getResponse()
+        self._resetStimulusPosition(display)
+        self._getResponse(display, recorder)
         self._recordResponse()
         
         
-    def _resetStimulusPosition(self):
+    def _resetStimulusPosition(self, display):
         overlapping = True
         while overlapping:
             for stimulus in self.stimulus:
-                stimulus.randomizePosition()
+                stimulus.randomizePosition(display)
                 
             overlapping = False
                 
@@ -80,10 +89,11 @@ class MultiComparisonTrials(object):
                 else:
                     if selected_stimulus is not stimulus:
                         stimulus.selecting_mode = 'unselected'
-                
+                        
                 stimulus.draw(display)
+                
             
-            key = recorder.getKeyboard('space')
+            key = recorder.getKeyboard(['space'])
             if key == 'space':
                 commit = True
             
@@ -93,7 +103,9 @@ class MultiComparisonTrials(object):
             x0, y0, = x1, y1
 
     def _recordResponse(self):
-        pass
+        self.result = []
+        for stimulus in self.stimulus:
+            self.result.append((stimulus.x, stimulus.y))
 
 class MultiComparison(object):
     '''
@@ -112,13 +124,17 @@ class MultiComparison(object):
         self.recorder = recorder
         self.RESOURCES = RESOURCES
         
-        faces_surface = sdl2.ext.load_image(self.RESOURCES.get_path('faces.png'))
+        self.faces_surface = sdl2.ext.load_image(self.RESOURCES.get_path('faces.png'))
         
     def constructTrials(self):
         self.trials = []
         self._determiningStimulusCombination()
         
         self._setupStimulus()
+        
+    def run(self):
+        self.trials[0].setupStimulus(self.stimulus)
+        self.trials[0].run(self.display, self.recorder)
         
     def _determiningStimulusCombination(self):
         subgroup_size = int(self.exp_parameters.items_per_multicomparison / 2)
@@ -136,13 +152,31 @@ class MultiComparison(object):
             
             
     def _setupStimulus(self):
+        self.stimulus = []
         
-        pass
+        for i in range(self.exp_parameters.n_items):
+            i_binary = '{0:04b}'.format(i)
+            eyes_gap = int(i_binary[0]) * 2 + 1
+            eyes_position = int(i_binary[1]) * 2 + 1
+            nose_length = int(i_binary[2]) * 2 + 1
+            mouth_position = int(i_binary[3]) * 2 + 1
+            print(eyes_gap, eyes_position, nose_length, mouth_position)
+            self.stimulus.append(Stimulus.ReedFace([eyes_gap, eyes_position, nose_length, mouth_position], -1, -1))
+            
+            self.stimulus[i].updateFaceSurface(self.faces_surface)
+            print(self.stimulus[i], i)
+
 
 def _main():
     exp_parameters = ExpParameters()
-    multi_comparison_session = MultiComparison(exp_parameters)
+
+    RESOURCES = sdl2.ext.Resources('.', 'resources')
+    main_display = Display.Display(RESOURCES, exp_parameters)
+    recorder = Recorder.Recorder('dummy')
+    
+    multi_comparison_session = MultiComparison(exp_parameters, main_display, recorder, RESOURCES)
     multi_comparison_session.constructTrials()
+    multi_comparison_session.run()
 
 if __name__ == '__main__':
     _main()

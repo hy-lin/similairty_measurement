@@ -80,9 +80,9 @@ class ReedFace(object):
         
         return False
     
-    def randomizePosition(self):
-        self.x = int(numpy.random.uniform(self.sdl_rect.w, 1024 - self.sdl_rect.w))
-        self.y = int(numpy.random.uniform(self.sdl_rect.h, 768 - self.sdl_rect.h))
+    def randomizePosition(self, display):
+        self.x = int(numpy.random.uniform(self.sdl_rect.w, display.w - self.sdl_rect.w))
+        self.y = int(numpy.random.uniform(self.sdl_rect.h, display.h - self.sdl_rect.h))
         
         self.updateRect()
         
@@ -106,5 +106,5 @@ class ReedFace(object):
                                    self.y + self.surface.h/2, \
                                    2)
                     
-    def __del__(self):
-        sdl2.SDL_FreeSurface(self.surface)
+#     def __del__(self):
+#         sdl2.SDL_FreeSurface(self.surface)
