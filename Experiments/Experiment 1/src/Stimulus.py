@@ -15,7 +15,7 @@ class ReedFace(object):
     '''
 
 
-    def __init__(self, face_parameters, x, y):
+    def __init__(self, face_parameters, x, y, index):
         '''
         Constructor
         '''
@@ -25,6 +25,7 @@ class ReedFace(object):
         self.disp_info = None
         self.x = x
         self.y = y
+        self.index = index
         
         self.sdl_rect = None
         self.rect = None

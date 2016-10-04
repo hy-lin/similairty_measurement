@@ -39,9 +39,9 @@ class MultiComparisonTrials(object):
             
     def run(self, display, recorder):
         self._resetStimulusPosition(display)
+        display.wait(300)
         self._getResponse(display, recorder)
         self._recordResponse()
-        
         
     def _resetStimulusPosition(self, display):
         overlapping = True
@@ -105,7 +105,9 @@ class MultiComparisonTrials(object):
     def _recordResponse(self):
         self.result = []
         for stimulus in self.stimulus:
-            self.result.append((stimulus.x, stimulus.y))
+            self.result.append((stimulus.index, stimulus.x, stimulus.y))
+            
+        print(self.result)
 
 class MultiComparison(object):
     '''
@@ -133,8 +135,10 @@ class MultiComparison(object):
         self._setupStimulus()
         
     def run(self):
-        self.trials[0].setupStimulus(self.stimulus)
-        self.trials[0].run(self.display, self.recorder)
+        for trial in self.trials:
+            trial.setupStimulus(self.stimulus)
+            trial.run(self.display, self.recorder)
+        
         
     def _determiningStimulusCombination(self):
         subgroup_size = int(self.exp_parameters.items_per_multicomparison / 2)
@@ -161,7 +165,7 @@ class MultiComparison(object):
             nose_length = int(i_binary[2]) * 2 + 1
             mouth_position = int(i_binary[3]) * 2 + 1
             print(eyes_gap, eyes_position, nose_length, mouth_position)
-            self.stimulus.append(Stimulus.ReedFace([eyes_gap, eyes_position, nose_length, mouth_position], -1, -1))
+            self.stimulus.append(Stimulus.ReedFace([eyes_gap, eyes_position, nose_length, mouth_position], -1, -1, i))
             
             self.stimulus[i].updateFaceSurface(self.faces_surface)
             print(self.stimulus[i], i)
