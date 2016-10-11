@@ -106,6 +106,47 @@ class ReedFace(object):
                                    self.x + self.surface.w/2, \
                                    self.y + self.surface.h/2, \
                                    2)
-                    
+
+class ScaleCandidate(object):
+    
+    def __init__(self, scale, max_scale = 9):
+        self.scale = scale
+        self.max_scale = max_scale
+        self.w = 80
+        self.h = 40
+        self.rect = None
+        
+    def updateRect(self, display):
+        self.x = display.w / 2 + (self.scale - (self.max_scale+1)/2) * self.w
+        self.y = display.h / 2 + display.h / 6
+        
+        self.rect = [int(self.x - self.w/2), \
+                     int(self.y - self.h/2), \
+                     int(self.x + self.w/2), \
+                     int(self.y + self.h/2)]
+        
+        print(self.rect, self.scale)
+        
+    def isMouseOver(self, x, y):
+        if self.rect[0] <= x <= self.rect[2] and self.rect[1] <= y <= self.rect[3]:
+            return True
+        
+        return False
+    
+        
+    def draw(self, display, mouse_over = False):
+        if self.scale == 1:
+            display.drawThickLine(self.x, self.y, self.rect[2], self.y, 2)
+        elif self.scale == self.max_scale:
+            display.drawThickLine(self.rect[0], self.y, self.x, self.y, 2)
+        else:
+            display.drawThickLine(self.rect[0], self.y, self.rect[2], self.y, 2)
+            
+        if mouse_over:    
+            display.drawThickLine(self.x, self.rect[1], self.x, self.rect[3], 4)
+            display.drawText('{}'.format(self.scale), self.x, self.rect[3], align = 'top-center')
+        else:
+            display.drawThickLine(self.x, self.rect[1], self.x, self.rect[3], 2)
+
 #     def __del__(self):
 #         sdl2.SDL_FreeSurface(self.surface)

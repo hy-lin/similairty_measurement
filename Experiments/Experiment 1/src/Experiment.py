@@ -108,20 +108,14 @@ class MultiComparisonTrials(object):
             self.result.append((stimulus.index, stimulus.x, stimulus.y))
             
         print(self.result)
-
-class MultiComparison(object):
-    '''
-    The main class for the MultiComparison session of the experiment
-    '''
-
-
+        
+class ExperimentSession(object):
     def __init__(self, exp_parameters, display, recorder, RESOURCES):
         '''
         Constructor
         '''
         self.exp_parameters = exp_parameters
         
-        dummy_exp_parms = None
         self.display = display
         self.recorder = recorder
         self.RESOURCES = RESOURCES
@@ -132,8 +126,32 @@ class MultiComparison(object):
         self.trials = []
         self._determiningStimulusCombination()
         
-        self._setupStimulus()
+        self._setupStimulusSurface()
         
+    def __determiningStimulusCombination(self):
+        print('If you see this, I fucked up. Please inform experimenter.')
+        raise NameError('Function: __determiningStimulusCombination is not defined in class: ExperimentSession')
+        
+    def _setupStimulusSurface(self):
+        self.stimulus = []
+        
+        for i in range(self.exp_parameters.n_items):
+            i_binary = '{0:04b}'.format(i)
+            eyes_gap = int(i_binary[0]) * 2 + 1
+            eyes_position = int(i_binary[1]) * 2 + 1
+            nose_length = int(i_binary[2]) * 2 + 1
+            mouth_position = int(i_binary[3]) * 2 + 1
+            print(eyes_gap, eyes_position, nose_length, mouth_position)
+            self.stimulus.append(Stimulus.ReedFace([eyes_gap, eyes_position, nose_length, mouth_position], -1, -1, i))
+            
+            self.stimulus[i].updateFaceSurface(self.faces_surface)
+            print(self.stimulus[i], i)
+
+class MultiComparison(ExperimentSession):
+    '''
+    The main class for the MultiComparison session of the experiment
+    '''
+
     def run(self):
         for trial in self.trials:
             trial.setupStimulus(self.stimulus)
@@ -153,24 +171,75 @@ class MultiComparison(object):
         for subgroup in trial_by_subgroup:
             stimulus_index = subgroups[subgroup[0]] + subgroups[subgroup[1]]
             self.trials.append(MultiComparisonTrials(stimulus_index))
+
             
+class PairComparisonTrial(object):
+    def __init__(self, stimulus_index):
+        self.stimulus_index = stimulus_index
+    
+    def setupStimulus(self, stimulus_pool):
+        self.stimulus = [stimulus_pool[stimulus_index] for stimulus_index in self.stimulus_index]
+         
+    def _resetStimulusPosition(self, display):
+        for i, stimulus in enumerate(self.stimulus):
+            stimulus.x = int(display.w / 2 + (i*2-1) * display.w/6)
+            stimulus.y = int(display.h / 2)
             
-    def _setupStimulus(self):
-        self.stimulus = []
+    def setupScaleCandidates(self, scale_candidates):
+        self.scale_candidates = scale_candidates
+            
+    def run(self, display, recorder):
+        self._resetStimulusPosition(display)
+        display.wait(300)
+        self._getResponse(display, recorder)
         
-        for i in range(self.exp_parameters.n_items):
-            i_binary = '{0:04b}'.format(i)
-            eyes_gap = int(i_binary[0]) * 2 + 1
-            eyes_position = int(i_binary[1]) * 2 + 1
-            nose_length = int(i_binary[2]) * 2 + 1
-            mouth_position = int(i_binary[3]) * 2 + 1
-            print(eyes_gap, eyes_position, nose_length, mouth_position)
-            self.stimulus.append(Stimulus.ReedFace([eyes_gap, eyes_position, nose_length, mouth_position], -1, -1, i))
+    def _getResponse(self, display, recorder):
+        catching = True
+        while catching:
+            mouse_overed_scale = None
+            display.clear(False)
+            mouse_x, mouse_y, button = recorder.getMouse()
             
-            self.stimulus[i].updateFaceSurface(self.faces_surface)
-            print(self.stimulus[i], i)
-
-
+            for stimulus in self.stimulus:
+                stimulus.draw(display)
+                
+            for scale_candidate in self.scale_candidates:
+                if scale_candidate.isMouseOver(mouse_x, mouse_y):
+                    mouse_overed_scale = scale_candidate
+                scale_candidate.draw(display, scale_candidate.isMouseOver(mouse_x, mouse_y))
+                
+            if button == 'left_down' and mouse_overed_scale is not None:
+                self.response = mouse_overed_scale.scale
+                catching = False
+                            
+            display.waitFPS()
+            display.refresh()
+            
+class PairComparison(ExperimentSession):
+    def run(self):
+        print(len(self.trials))
+        for trial in self.trials:
+            trial.setupStimulus(self.stimulus)
+            trial.setupScaleCandidates(self.scale_candidates)
+            trial.run(self.display, self.recorder)
+        
+    def constructTrials(self):
+        super(PairComparison, self).constructTrials()
+        self._setupScaleCandidates()
+        
+    def _determiningStimulusCombination(self):
+        self.trials = []
+        pairs = list(itertools.combinations(range(self.exp_parameters.n_items), 2))
+        pairs = numpy.random.permutation(pairs)
+        
+        for pair in pairs:
+            self.trials.append(PairComparisonTrial(numpy.random.permutation(pair)))
+            
+    def _setupScaleCandidates(self):
+        self.scale_candidates = [Stimulus.ScaleCandidate(i+1) for i in range(9)]
+        for scale_candidate in self.scale_candidates:
+            scale_candidate.updateRect(self.display)
+    
 def _main():
     exp_parameters = ExpParameters()
 
@@ -180,7 +249,22 @@ def _main():
     
     multi_comparison_session = MultiComparison(exp_parameters, main_display, recorder, RESOURCES)
     multi_comparison_session.constructTrials()
-    multi_comparison_session.run()
+#     multi_comparison_session.run()
+    
+    pair_comparison_session = PairComparison(exp_parameters, main_display, recorder, RESOURCES)
+    pair_comparison_session.constructTrials()
+    pair_comparison_session.run()
+    
+    scale_candidates = [Stimulus.ScaleCandidate(i+1) for i in range(9)]
+    for scale_candidate in scale_candidates:
+        scale_candidate.updateRect(main_display)
+    
+    pair_comparison_trial = PairComparisonTrial([0, 1])
+    pair_comparison_trial.setupStimulus(multi_comparison_session.stimulus)
+    pair_comparison_trial.setupScaleCandidates(scale_candidates)
+    pair_comparison_trial.run(main_display, recorder)
+    print(pair_comparison_trial.response)
+    
 
 if __name__ == '__main__':
     _main()

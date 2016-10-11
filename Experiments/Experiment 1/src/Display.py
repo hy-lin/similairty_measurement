@@ -45,17 +45,6 @@ class Display(object):
         self.font = None
         
         self.running = True
-        
-    def getStimulusRect(self, position):
-        cx, cy = self.exp_parameters.window_center
-        ang = 2 * math.pi * position / self.exp_parameters.n_position
-        x = cx + self.exp_parameters.stimulus_radius * math.cos(ang)
-        y = cy + self.exp_parameters.stimulus_radius * math.sin(ang)
-        
-        x0, y0 = x - self.exp_parameters.stimulus_size/2, y - self.exp_parameters.stimulus_size/2
-        x1, y1 = x + self.exp_parameters.stimulus_size/2, y + self.exp_parameters.stimulus_size/2
-        
-        return (x0, y0, x1, y1)
     
     def clear(self, refresh = False):
         self.renderer.clear(sdl2.ext.Color(200, 200, 200))
@@ -74,7 +63,7 @@ class Display(object):
     def waitFPS(self):
         sdl2.sdlgfx.SDL_framerateDelay(self.fps)
     
-    def drawThickLine(self, x0, y0, x1, y1, thickness, color):
+    def drawThickLine(self, x0, y0, x1, y1, thickness, color = sdl2.ext.Color(0, 0, 0)):
         x0, y0, x1, y1, thickness = int(x0), int(y0), int(x1), int(y1), int(thickness)
         sdl2.sdlgfx.thickLineRGBA(self.renderer.renderer, x0, y0, x1, y1, thickness, color.r, color.g, color.b, color.a)
     
@@ -86,15 +75,18 @@ class Display(object):
         sdl2.sdlgfx.thickLineRGBA(self.renderer.renderer, x1, y0, x1, y1, thickness, color.r, color.g, color.b, color.a)
         sdl2.sdlgfx.thickLineRGBA(self.renderer.renderer, x0, y1, x1, y1, thickness, color.r, color.g, color.b, color.a)
         
-    def drawText(self, text, x = None, y = None, text_color = sdl2.SDL_Color(0, 0, 0), align = 'center-center'):
-        if self.font is None:
-            self.font = sdl2.sdlttf.TTF_OpenFont(self.RESOURCES.get_path('micross.ttf'), int(self.exp_parameters.font_size))
+    def drawText(self, text, x = None, y = None, text_color = sdl2.SDL_Color(0, 0, 0), align = 'center-center', font_size = 60):
+        
+        if self.font is None or self.font_size != font_size:
+            print(self.RESOURCES.get_path('one47.ttf'), type(self.RESOURCES.get_path('one47.ttf')))
+            self.font = sdl2.sdlttf.TTF_OpenFont(self.RESOURCES.get_path('one47.ttf').encode(), int(font_size))
+            self.font_size = font_size
             
         if x is None:
             x = self.window_surface.w/2
         if y is None:
             y = self.window_surface.h/2
-        msg = sdl2.sdlttf.TTF_RenderText_Solid(self.font, text, text_color)
+        msg = sdl2.sdlttf.TTF_RenderText_Solid(self.font, text.encode(), text_color)
         
         if align == 'center-center':
             msg_rect = sdl2.SDL_Rect(int(x-msg.contents.w/2), int(y-msg.contents.h/2), msg.contents.w, msg.contents.h)
@@ -102,6 +94,8 @@ class Display(object):
             msg_rect = sdl2.SDL_Rect(x, y, msg.contents.w, msg.contents.h)
         elif align == 'top-right':
             msg_rect = sdl2.SDL_Rect(x-msg.contents.w, y, msg.contents.w, msg.contents.h)
+        elif align == 'top-center':
+            msg_rect = sdl2.SDL_Rect(int(x-msg.contents.w/2), y, msg.contents.w, msg.contents.h)
         elif align == 'center-left':
             msg_rect = sdl2.SDL_Rect(x, int(y-msg.contents.h/2), msg.contents.w, msg.contents.h)
         elif align == 'center-right':
