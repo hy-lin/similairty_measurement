@@ -112,8 +112,8 @@ class ScaleCandidate(object):
     def __init__(self, scale, max_scale = 9):
         self.scale = scale
         self.max_scale = max_scale
-        self.w = 80
-        self.h = 40
+        self.w = 100
+        self.h = 60
         self.rect = None
         
     def updateRect(self, display):
@@ -128,7 +128,7 @@ class ScaleCandidate(object):
         print(self.rect, self.scale)
         
     def isMouseOver(self, x, y):
-        if self.rect[0] <= x <= self.rect[2] and self.rect[1] <= y <= self.rect[3]:
+        if self.rect[0] < x <= self.rect[2] and self.rect[1] < y <= self.rect[3]:
             return True
         
         return False
@@ -147,6 +147,7 @@ class ScaleCandidate(object):
             display.drawText('{}'.format(self.scale), self.x, self.rect[3], align = 'top-center')
         else:
             display.drawThickLine(self.x, self.rect[1], self.x, self.rect[3], 2)
+            display.drawText('{}'.format(self.scale), self.x, self.rect[3], text_color = (175, 175, 175), align = 'top-center')
 
 #     def __del__(self):
 #         sdl2.SDL_FreeSurface(self.surface)

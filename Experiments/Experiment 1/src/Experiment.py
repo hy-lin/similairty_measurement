@@ -190,7 +190,8 @@ class PairComparisonTrial(object):
             
     def run(self, display, recorder):
         self._resetStimulusPosition(display)
-        display.wait(300)
+        display.clear(True)
+        display.wait(1000)
         self._getResponse(display, recorder)
         
     def _getResponse(self, display, recorder):

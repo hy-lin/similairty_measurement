@@ -77,6 +77,9 @@ class Display(object):
         
     def drawText(self, text, x = None, y = None, text_color = sdl2.SDL_Color(0, 0, 0), align = 'center-center', font_size = 60):
         
+        if type(text_color) is not sdl2.SDL_Color:
+            text_color = sdl2.SDL_Color(text_color[0], text_color[1], text_color[2])
+        
         if self.font is None or self.font_size != font_size:
             print(self.RESOURCES.get_path('one47.ttf'), type(self.RESOURCES.get_path('one47.ttf')))
             self.font = sdl2.sdlttf.TTF_OpenFont(self.RESOURCES.get_path('one47.ttf').encode(), int(font_size))
