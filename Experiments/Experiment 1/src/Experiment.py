@@ -13,6 +13,7 @@ import Stimulus
 import itertools
 import numpy.random
 import sdl2.ext
+import math
 
 class ExpParameters(object):
     '''
@@ -22,7 +23,7 @@ class ExpParameters(object):
     def __init__(self):
         
         self.n_items = 16
-        self.items_per_multicomparison = 4
+        self.items_per_multicomparison = 8
         
         pass
 
@@ -109,6 +110,23 @@ class MultiComparisonTrials(object):
             
         print(self.result)
         
+    def findResponseMinMax(self):
+        max_x, max_y = -1, -1
+        min_x, min_y = 9999, 9999
+        for result in self.result:
+            if result[1] > max_x:
+                max_x = result[1]
+            if result[1] < min_x:
+                min_x = result[1]
+                
+            if result[2] > max_y:
+                max_y = result[2]
+            if result[2] < min_y:
+                min_y = result[2]
+                
+        return min_x, min_y, max_x, max_y
+                    
+        
 class ExperimentSession(object):
     def __init__(self, exp_parameters, display, recorder, RESOURCES):
         '''
@@ -171,6 +189,36 @@ class MultiComparison(ExperimentSession):
         for subgroup in trial_by_subgroup:
             stimulus_index = subgroups[subgroup[0]] + subgroups[subgroup[1]]
             self.trials.append(MultiComparisonTrials(stimulus_index))
+            
+    def save(self, pID):
+        dist_matrix = [[[]for m in range(self.exp_parameters.n_items)] for n in range(self.exp_parameters.n_items)]
+        for trial in self.trials:
+            min_x, min_y, max_x, max_y = trial.findResponseMinMax()
+            x_scale = 1280.0/(max_x - min_x)
+            y_scale = 1024.0/(max_y - min_y)
+            
+            for result_i in trial.result:
+                for result_l in trial.result:
+                    i, l = result_i[0], result_l[0]
+                    x_i, x_l = result_i[1], result_l[1]
+                    y_i, y_l = result_i[2], result_l[2]
+                    
+                    dist = math.sqrt(((x_i-x_l) * x_scale)**2 + ((y_i - y_l) * y_scale)**2)
+                    dist_matrix[i][l].append(dist)
+                    
+                    
+        for i, row in enumerate(dist_matrix):
+            for l, col in enumerate(row):
+                dist_matrix[i][l] = numpy.mean(col)
+        print(dist_matrix)
+        
+        output_file = open('Data\\MultiCompare_{:03d}.dat'.format(pID), 'w')
+        for row in dist_matrix:
+            for col in row:
+                output_file.write('{:.3f}\t'.format(col))
+            output_file.write('\n')
+            
+        output_file.close()
 
             
 class PairComparisonTrial(object):
@@ -240,31 +288,54 @@ class PairComparison(ExperimentSession):
         self.scale_candidates = [Stimulus.ScaleCandidate(i+1) for i in range(9)]
         for scale_candidate in self.scale_candidates:
             scale_candidate.updateRect(self.display)
+            
+    def save(self, pID):
+        dist_matrix = numpy.zeros((self.exp_parameters.n_items, self.exp_parameters.n_items))
+        for trial in self.trials:
+            dist_matrix[trial.stimulus_index[0]][trial.stimulus_index[1]] = trial.response
+            dist_matrix[trial.stimulus_index[1]][trial.stimulus_index[0]] = trial.response
+            
+        output_file = open('Data\\PairWise_{:03d}.dat'.format(pID), 'w')
+        for row in dist_matrix:
+            for col in row:
+                output_file.write('{:.3f}\t'.format(col))
+            output_file.write('\n')
+            
+        output_file.close()
+     
+    
+class Experiment(object):
+    def __init__(self):
+        self.exp_parameters = ExpParameters()
+        self.RESOURCES = sdl2.ext.Resources('.', 'resources')
+        self.display = Display.Display(self.RESOURCES, self.exp_parameters)
+        self.recorder = Recorder.Recorder(self.exp_parameters)
+        
+        self.pID = 999
+        
+        self._setupSessions()
+        
+    def _setupSessions(self):
+        self.multi_comparison_session = MultiComparison(self.exp_parameters, self.display, self.recorder, self.RESOURCES)
+        self.multi_comparison_session.constructTrials()
+        
+        self.pair_comparison_session = PairComparison(self.exp_parameters, self.display, self.recorder, self.RESOURCES)
+        self.pair_comparison_session.constructTrials()
+        
+    def run(self):
+        self.multi_comparison_session.run()
+        self.pair_comparison_session.run()
+    
+    def save(self):
+        self.multi_comparison_session.save(self.pID)
+        self.pair_comparison_session.save(self.pID)
+    
     
 def _main():
-    exp_parameters = ExpParameters()
-
-    RESOURCES = sdl2.ext.Resources('.', 'resources')
-    main_display = Display.Display(RESOURCES, exp_parameters)
-    recorder = Recorder.Recorder('dummy')
-    
-    multi_comparison_session = MultiComparison(exp_parameters, main_display, recorder, RESOURCES)
-    multi_comparison_session.constructTrials()
-#     multi_comparison_session.run()
-    
-    pair_comparison_session = PairComparison(exp_parameters, main_display, recorder, RESOURCES)
-    pair_comparison_session.constructTrials()
-    pair_comparison_session.run()
-    
-    scale_candidates = [Stimulus.ScaleCandidate(i+1) for i in range(9)]
-    for scale_candidate in scale_candidates:
-        scale_candidate.updateRect(main_display)
-    
-    pair_comparison_trial = PairComparisonTrial([0, 1])
-    pair_comparison_trial.setupStimulus(multi_comparison_session.stimulus)
-    pair_comparison_trial.setupScaleCandidates(scale_candidates)
-    pair_comparison_trial.run(main_display, recorder)
-    print(pair_comparison_trial.response)
+    exp = Experiment()
+    exp.run()
+    exp.save()
+    pass
     
 
 if __name__ == '__main__':
