@@ -1,0 +1,75 @@
+---
+title: "Debriefing"
+author: "Hsuan-Yu Lin"
+date: "8 November 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+Please make sure your participant ID is correct in order to load your data file. 
+```{r input.pID}
+pID <- 999
+```
+Really, check your participant ID.
+
+```{r load.dara, echo = FALSE}
+pair_dist_matrix <- as.matrix(read.table(sprintf('Data/PairWise_%03d.dat', pID), sep = '\t'))
+pair_dist_matrix <- pair_dist_matrix[,-ncol(pair_dist_matrix)]
+multi_dist_matrix <- as.matrix(read.table(sprintf('Data/MultiCompare_%03d.dat', pID), sep = '\t'))
+multi_dist_matrix <- multi_dist_matrix[,-ncol(multi_dist_matrix)]
+```
+
+## Experiment Object
+This experiment is developed to test a new method of measuring the similarity matrix between items. Traditionally, in order to measure the similarity matrix, experimenters and participants have to go through a lengthy procedure in order to acquire the similarity matrix. One of the commonly used procedure is the second part of this experiment: Experimenters show participants two items and ask participants about the similarity between said items. 
+
+### Pair-Wise Comparison
+
+This traditional __Pair-Wise Comparison__ method ensures the similarity between all the possible pairs are measured. However, the required number of trials is as 
+$$\binom{n}{2} = \frac{n(n-1)}{2}$$
+when $n$ is the number of items. The number of trials increases as power function of $n$. If the total number of items is $10$, you need $45$ trials to acquire the similarity matrix. If the number of items is $50$, a participant has to go through 
+
+``` {r do.the.math}
+50 * (50-1) / 2
+```
+this amount of trials. This amount of trials would require about two hours to complete. It's very painful and boring for participants and is very very costly just to acquire the similarity matrix.
+
+### Multi-Items Arrangement
+In this experiment, we tried a new method to measure the similarity matrix: __Multi-Items Arrangement__. Instead of comparing two items in each trials, Multi-Items Arrangement method allows multiple items being compared at once, which reduced the number of trials dramatically. Assuming $k$ items are compared once, and there are totally $n$ items. The required number of trials is 
+$$\binom{\frac{2n}{k}}{2} = \frac{(2n/k)*(2n/k-1)}{2}.$$
+So if we present $4$ items at once, and the total number of items is $10$. The number of trials is $10$. If the number of items is $50$, a participant has to go through
+``` {r do.the.math.again}
+(50*2/4) * (50*2/4 - 1) / 2
+```
+This is much better than what we had with pair-wise comparison. If we present $10$ items at once, the number became:
+``` {r do.the.math.third}
+(50*2/10) * (50*2/10 - 1) / 2
+```
+This is easily manageable. The more items we present at once, the less trials are required to acquire the similarity matrix.
+
+However, this is not a well-tested method. We want to ensure the Multi-Items Arrangement method can measure the similarity matrix accurately and reliably. So we test the Multi-Items Arrangement method along with Pair-Wise Comparison method and compare the similarity matrices acquired by both method. If the similarity matrices converge, we feel more confident about the Multi-Items Arrangement method.
+
+# Debriefing
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
