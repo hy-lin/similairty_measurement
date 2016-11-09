@@ -3,7 +3,10 @@ title: "Debriefing"
 author: "Hsuan-Yu Lin"
 date: "8 November 2016"
 output: html_document
+bibliography: bibliography.bib
+csl: apa-annotated-bibliography.csl
 ---
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -24,7 +27,7 @@ multi_dist_matrix <- multi_dist_matrix[,-ncol(multi_dist_matrix)]
 ```
 
 ## Experiment Object
-This experiment is developed to test a new method of measuring the similarity matrix between items. Traditionally, in order to measure the similarity matrix, experimenters and participants have to go through a lengthy procedure in order to acquire the similarity matrix. One of the commonly used procedure is the second part of this experiment: Experimenters show participants two items and ask participants about the similarity between said items. 
+This experiment is developed to test a new method of measuring the similarity matrix between items [@nosofsky1992similarity]. Traditionally, in order to measure the similarity matrix, experimenters and participants have to go through a lengthy procedure in order to acquire the similarity matrix [@MDS4Psychology]. One of the commonly used procedure is the second part of this experiment, Pair-Wise Comparison: Experimenters show participants two items and ask participants about the similarity between said items. 
 
 ### Pair-Wise Comparison
 
@@ -52,24 +55,37 @@ This is easily manageable. The more items we present at once, the less trials ar
 
 However, this is not a well-tested method. We want to ensure the Multi-Items Arrangement method can measure the similarity matrix accurately and reliably. So we test the Multi-Items Arrangement method along with Pair-Wise Comparison method and compare the similarity matrices acquired by both method. If the similarity matrices converge, we feel more confident about the Multi-Items Arrangement method.
 
-# Debriefing
+## Your Result
+Here we show you the result from your response.
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+### Multi-Items Arrangement
+``` {r prepare.plot.multi.item.arrangement.result, echo=FALSE}
+multi_loc <- cmdscale(multi_dist_matrix)
+multi.scale <- 1.5/(max(multi_loc) - min(multi_loc))
+multi.x = multi_loc[, 1] * multi.scale
+multi.y = multi_loc[, 2] * multi.scale
+```
+``` {r plot.multi.item.arrangement.result}
+plot(multi.x, multi.y, type = 'n', xlim = c(-1, 1), ylim = c(-1, 1))
+text(multi.x, multi.y, colnames(multi_dist_matrix), cex=.6, col = 'black')
 ```
 
-## Including Plots
+This is your similarity matrix measured by multi-items arrangement method. To visualize the similarity matrix, we used [Multidimensional Scaling](https://en.wikipedia.org/wiki/Multidimensional_scaling) to consolidate the result into a two-dimensional plot. The distance between items indicates the similarity between items, which is just the same as we asked you to do in the multi-items arrangement method. You can interpret the plot as where you would put all the items on the screen in a multi-items arrangement trial. 
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+### Pair-Wise Comparison
+```{r prepare.plot.pair.wise.comparison.result, echo=FALSE}
+pair_loc <- cmdscale(pair_dist_matrix)
+pair.scale <- 1.5/(max(pair_loc)-min(pair_loc))
+pair.x = pair_loc[, 1] * pair.scale
+pair.y = pair_loc[, 2] * pair.scale
+```
+``` {r plot.pair.wise.comparison.result}
+plot(pair.x, pair.y, type = 'n', xlim = c(-1, 1), ylim = c(-1, 1))
+text(pair.x, pair.y, colnames(pair_dist_matrix), cex=.6, col = 'red')
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+This is the similarity matrix acquired by pair-wise comparison method. Again, we used MDS to visualize the similarity matrix. If you are lucky, you will see the similarity matrices acquired from multi-items arrangement method and the pair-wise comparison method are very similar to each other. But in some cases, they are different from each other. This is mostly because MDS might rotating and mirroring the similarity matrix, thus results in different plots. 
+
+Here you go, this is the result generated from your data.
+
+# References

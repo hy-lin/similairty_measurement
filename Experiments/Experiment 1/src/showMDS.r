@@ -17,7 +17,7 @@ pair.scale <- 1/(max(pair_loc)-min(pair_loc))
 x = pair_loc[, 1] * pair.scale
 y = pair_loc[, 2] * pair.scale
 
-plot(x, y, type = 'n')
+plot(x, y, type = 'n', xlim = c(-1, 1), ylim = c(-1, 1))
 text(x, y, colnames(pair_dist_matrix), cex=.6, col = 'red')
 
 multi_dist_matrix <- as.matrix(read.table(sprintf('MultiCompare_%03d.dat', pID), sep = '\t'))
@@ -28,4 +28,5 @@ multi.scale <- 1/(max(multi_loc) - min(multi_loc))
 x = multi_loc[, 1] * multi.scale
 y = multi_loc[, 2] * multi.scale
 
+plot(x, y, type = 'n', xlim = c(-1, 1), ylim = c(-1, 1))
 text(x, y, colnames(multi_dist_matrix), cex=.6, col = 'black')
