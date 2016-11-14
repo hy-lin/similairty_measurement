@@ -20,9 +20,9 @@ pID <- 999
 Really, check your participant ID.
 
 ```{r load.dara, echo = FALSE}
-pair_dist_matrix <- as.matrix(read.table(sprintf('Data/PairWise_%03d.dat', pID), sep = '\t'))
+pair_dist_matrix <- as.matrix(read.table(sprintf('Data/SimilarityMatrix/PairWise_%03d_01.dat', pID), sep = '\t'))
 pair_dist_matrix <- pair_dist_matrix[,-ncol(pair_dist_matrix)]
-multi_dist_matrix <- as.matrix(read.table(sprintf('Data/MultiCompare_%03d.dat', pID), sep = '\t'))
+multi_dist_matrix <- as.matrix(read.table(sprintf('Data/SimilarityMatrix/MultiItemsArrangement_%03d_01.dat', pID), sep = '\t'))
 multi_dist_matrix <- multi_dist_matrix[,-ncol(multi_dist_matrix)]
 ```
 
@@ -40,6 +40,13 @@ when $n$ is the number of items. The number of trials increases as power functio
 ```
 this amount of trials. This amount of trials would require about two hours to complete. It's very painful and boring for participants and is very very costly just to acquire the similarity matrix.
 
+In this experiment, we used $16$ items. This means there will be
+
+``` {r do.more.math}
+16 * (16-1) / 2
+```
+number of trials. This is still under manageable number, since we don't want to torture you.
+
 ### Multi-Items Arrangement
 In this experiment, we tried a new method to measure the similarity matrix: __Multi-Items Arrangement__. Instead of comparing two items in each trials, Multi-Items Arrangement method allows multiple items being compared at once, which reduced the number of trials dramatically. Assuming $k$ items are compared once, and there are totally $n$ items. The required number of trials is 
 $$\binom{\frac{2n}{k}}{2} = \frac{(2n/k)*(2n/k-1)}{2}.$$
@@ -54,6 +61,11 @@ This is much better than what we had with pair-wise comparison. If we present $1
 This is easily manageable. The more items we present at once, the less trials are required to acquire the similarity matrix.
 
 However, this is not a well-tested method. We want to ensure the Multi-Items Arrangement method can measure the similarity matrix accurately and reliably. So we test the Multi-Items Arrangement method along with Pair-Wise Comparison method and compare the similarity matrices acquired by both method. If the similarity matrices converge, we feel more confident about the Multi-Items Arrangement method.
+
+In this experiment, we presetned $8$ items at once, so the total number of trials is:
+``` {r}
+(16*2/8) * (16*2/8 - 1) / 2
+```
 
 ## Your Result
 Here we show you the result from your response.

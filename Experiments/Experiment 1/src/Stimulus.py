@@ -40,7 +40,7 @@ class ReedFace(object):
 
         
     def _getSourceRect(self):
-        w, h = 160, 240
+        w, h = 80, 120
         x0 = (self.eyes_gap-1) * 3 * w + (self.nose_length-1) * w
         y0 = (self.eyes_position-1) * 3 * h + (self.mouth_position-1) * h
         

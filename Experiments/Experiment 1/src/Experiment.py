@@ -24,6 +24,7 @@ class ExpParameters(object):
         
         self.n_items = 16
         self.items_per_multicomparison = 8
+        self.n_repetition = 2
         
         pass
 
@@ -138,7 +139,7 @@ class ExperimentSession(object):
         self.recorder = recorder
         self.RESOURCES = RESOURCES
         
-        self.faces_surface = sdl2.ext.load_image(self.RESOURCES.get_path('faces.png'))
+        self.faces_surface = sdl2.ext.load_image(self.RESOURCES.get_path('faces_small.png'))
         
     def constructTrials(self):
         self.trials = []
@@ -180,23 +181,42 @@ class MultiComparison(ExperimentSession):
         subgroup_size = int(self.exp_parameters.items_per_multicomparison / 2)
         n_subgroups = int(self.exp_parameters.n_items / subgroup_size)
         
-        stimulus_pool = numpy.random.permutation(self.exp_parameters.n_items)
         subgroups = []
-        for subgroup_index in range(n_subgroups):
-            subgroups.append([stimulus_pool[i] for i in range(subgroup_index*subgroup_size, (subgroup_index+1)*subgroup_size)])
+        for i in range(self.exp_parameters.n_repetition):
+            stimulus_pool = numpy.random.permutation(self.exp_parameters.n_items)
+            
+            for subgroup_index in range(n_subgroups):
+                subgroups.append([stimulus_pool[i] for i in range(subgroup_index*subgroup_size, (subgroup_index+1)*subgroup_size)])
+            
+            trial_by_subgroup = itertools.combinations(range(n_subgroups), 2)
+            for subgroup in trial_by_subgroup:
+                stimulus_index = subgroups[subgroup[0]] + subgroups[subgroup[1]]
+                self.trials.append(MultiComparisonTrials(stimulus_index))
+                
+    def save(self, pID, session):
+        self._saveSimilarityMatrix(pID, session)
+        self._saveTrial(pID, session)
         
-        trial_by_subgroup = itertools.combinations(range(n_subgroups), 2)
-        for subgroup in trial_by_subgroup:
-            stimulus_index = subgroups[subgroup[0]] + subgroups[subgroup[1]]
-            self.trials.append(MultiComparisonTrials(stimulus_index))
-            
-    def save(self, pID):
+    def _saveSimilarityMatrix(self, pID, session):
         dist_matrix = [[[]for m in range(self.exp_parameters.n_items)] for n in range(self.exp_parameters.n_items)]
+        
+        min_x, min_y, max_x, max_y = 9999, 9999, -9999, -9999
         for trial in self.trials:
-            min_x, min_y, max_x, max_y = trial.findResponseMinMax()
-            x_scale = 1280.0/(max_x - min_x)
-            y_scale = 1024.0/(max_y - min_y)
+            t_min_x, t_min_y, t_max_x, t_max_y = trial.findResponseMinMax()
             
+            if t_min_x <= min_x:
+                min_x = t_min_x
+            if t_min_y <= min_y:
+                min_y = t_min_y
+            if t_max_x >= max_x:
+                max_x = t_max_x
+            if t_max_y >= max_y:
+                max_y = t_max_y
+
+        x_scale = 1280.0/(max_x - min_x)
+        y_scale = 1024.0/(max_y - min_y)
+        
+        for trial in self.trials:
             for result_i in trial.result:
                 for result_l in trial.result:
                     i, l = result_i[0], result_l[0]
@@ -212,7 +232,7 @@ class MultiComparison(ExperimentSession):
                 dist_matrix[i][l] = numpy.mean(col)
         print(dist_matrix)
         
-        output_file = open('Data\\MultiCompare_{:03d}.dat'.format(pID), 'w')
+        output_file = open('Data\\SimilarityMatrix\\MultiItemsArrangement_{:03d}_{:02d}.dat'.format(pID, session), 'w')
         for row in dist_matrix:
             for col in row:
                 output_file.write('{:.3f}\t'.format(col))
@@ -220,6 +240,15 @@ class MultiComparison(ExperimentSession):
             
         output_file.close()
 
+    def _saveTrial(self, pID, session):
+        output_file = open('Data\\TrialsDetail\\MultiItemsArrangement_{:03d}_{:02d}.dat'.format(pID, session), 'w')
+        for i, trial in enumerate(self.trials):
+            output_file.write('{:d}\t'.format(i))
+            for result in trial.result:
+                output_file.write('{:d}\t{:d}\t{:d}\t'.format(result[0], result[1], result[2]))
+            output_file.write('\n')
+            
+        output_file.close()
             
 class PairComparisonTrial(object):
     def __init__(self, stimulus_index):
@@ -279,6 +308,7 @@ class PairComparison(ExperimentSession):
     def _determiningStimulusCombination(self):
         self.trials = []
         pairs = list(itertools.combinations(range(self.exp_parameters.n_items), 2))
+        pairs = pairs * self.exp_parameters.n_repetition
         pairs = numpy.random.permutation(pairs)
         
         for pair in pairs:
@@ -289,20 +319,35 @@ class PairComparison(ExperimentSession):
         for scale_candidate in self.scale_candidates:
             scale_candidate.updateRect(self.display)
             
-    def save(self, pID):
-        dist_matrix = numpy.zeros((self.exp_parameters.n_items, self.exp_parameters.n_items))
+    def save(self, pID, session):
+        self._saveSimilarityMatrix(pID, session)
+        self._saveTrial(pID, session)
+        
+        
+    def _saveSimilarityMatrix(self, pID, session):
+        dist_matrix = [[[]for m in range(self.exp_parameters.n_items)] for n in range(self.exp_parameters.n_items)]
+        
         for trial in self.trials:
-            dist_matrix[trial.stimulus_index[0]][trial.stimulus_index[1]] = trial.response
-            dist_matrix[trial.stimulus_index[1]][trial.stimulus_index[0]] = trial.response
+            dist_matrix[trial.stimulus_index[0]][trial.stimulus_index[1]].append(trial.response)
+            dist_matrix[trial.stimulus_index[1]][trial.stimulus_index[0]].append(trial.response)
             
-        output_file = open('Data\\PairWise_{:03d}.dat'.format(pID), 'w')
+        output_file = open('Data\\SimilarityMatrix\\PairWise_{:03d}_{:02d}.dat'.format(pID, session), 'w')
         for row in dist_matrix:
             for col in row:
-                output_file.write('{:.3f}\t'.format(col))
+                if col:
+                    output_file.write('{:.3f}\t'.format(numpy.mean(col)))
+                else:
+                    output_file.write('{:.3f}\t'.format(0.0))
             output_file.write('\n')
             
         output_file.close()
-     
+        
+    def _saveTrial(self, pID, session):
+        output_file = open('Data\\TrialsDetail\\PairWise_{:03d}_{:02d}.dat'.format(pID, session), 'w')
+        for i, trial in enumerate(self.trials):
+            output_file.write('{:d}\t'.format(i))
+            output_file.write('{:d}\t{:d}\t{:d}\n'.format(trial.stimulus_index[0], trial.stimulus_index[1], trial.response))
+        output_file.close()
     
 class Experiment(object):
     def __init__(self):
@@ -312,6 +357,7 @@ class Experiment(object):
         self.recorder = Recorder.Recorder(self.exp_parameters)
         
         self.pID = 999
+        self.session = 1
         
         self._setupSessions()
         
@@ -324,17 +370,14 @@ class Experiment(object):
         
     def run(self):
         self.multi_comparison_session.run()
+        self.multi_comparison_session.save(self.pID, self.session)
+
         self.pair_comparison_session.run()
-    
-    def save(self):
-        self.multi_comparison_session.save(self.pID)
-        self.pair_comparison_session.save(self.pID)
-    
-    
+        self.pair_comparison_session.save(self.pID, self.session)
+
 def _main():
     exp = Experiment()
     exp.run()
-    exp.save()
     pass
     
 
