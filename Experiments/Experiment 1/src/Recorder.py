@@ -9,7 +9,6 @@ os.environ['PYSDL2_DLL_PATH'] = 'sdl_dll\\'
 
 import sdl2.mouse
 import sdl2.ext
-import sdl2
 import sdl2.timer
 
 class Recorder(object):

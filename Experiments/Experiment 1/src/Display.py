@@ -6,14 +6,13 @@ Created on 23.04.2015
 
 import os
 os.environ['PYSDL2_DLL_PATH'] = 'sdl_dll\\'
+os.environ['SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS'] = '0'
 
 import sdl2.ext
 import sdl2.sdlgfx
 import sdl2.surface
 import sdl2.sdlttf
 import sdl2.timer
-import math
-import numpy
 
 class Display(object):
     '''
@@ -43,6 +42,7 @@ class Display(object):
         
         sdl2.sdlttf.TTF_Init()
         self.font = None
+        self.font_size = 20
         
         self.running = True
     
@@ -75,13 +75,42 @@ class Display(object):
         sdl2.sdlgfx.thickLineRGBA(self.renderer.renderer, x1, y0, x1, y1, thickness, color.r, color.g, color.b, color.a)
         sdl2.sdlgfx.thickLineRGBA(self.renderer.renderer, x0, y1, x1, y1, thickness, color.r, color.g, color.b, color.a)
         
+    def getString(self, recorder, display_text, x = None, y = None, text_color = sdl2.SDL_Color(0, 0, 0)):
+        if self.font is None:
+            self.font = sdl2.sdlttf.TTF_OpenFont(self.RESOURCES.get_path('one47.ttf').encode(), int(self.exp_parameters.font_size))
+            
+        if x is None:
+            x = self.window_surface.w/2
+        if y is None:
+            y = self.window_surface.h/2
+
+        entered = False
+        input_string = ''
+        
+        self.clear()
+        self.drawText(display_text + input_string, x, y, align = 'top-left')
+        self.refresh()
+        
+        while not entered:
+            input_char, _ = recorder.recordKeyboard([b'0', b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'Return'])
+            if input_char <= 9:
+                input_string += str(input_char)
+            elif input_char == 10:
+                entered = True
+            
+            self.clear()
+            self.drawText(display_text + input_string, x, y, align = 'top-left')
+            self.refresh()
+            sdl2.sdlgfx.SDL_framerateDelay(self.fps)
+            
+        return input_string
+        
     def drawText(self, text, x = None, y = None, text_color = sdl2.SDL_Color(0, 0, 0), align = 'center-center', font_size = 60):
         
         if type(text_color) is not sdl2.SDL_Color:
             text_color = sdl2.SDL_Color(text_color[0], text_color[1], text_color[2])
         
         if self.font is None or self.font_size != font_size:
-            print(self.RESOURCES.get_path('one47.ttf'), type(self.RESOURCES.get_path('one47.ttf')))
             self.font = sdl2.sdlttf.TTF_OpenFont(self.RESOURCES.get_path('one47.ttf').encode(), int(font_size))
             self.font_size = font_size
             

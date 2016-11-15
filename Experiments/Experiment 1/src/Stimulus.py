@@ -3,23 +3,17 @@ Created on 24.03.2015
 
 @author: Hsuan-Yu Lin
 '''
-import sdl2
 import sdl2.ext
 import sdl2.surface
 import sdl2.pixels
 import numpy.random
 
-class ReedFace(object):
-    '''
-    classdocs
-    '''
-
-
-    def __init__(self, face_parameters, x, y, index):
+class Stimulus(object):
+    def __init__(self, stimulus_parameters, x = 200, y = 200, index = None):
         '''
         Constructor
         '''
-        self._mapParameters(face_parameters)
+        self._mapParameters(stimulus_parameters)
         
         self.surface = None
         self.disp_info = None
@@ -33,38 +27,18 @@ class ReedFace(object):
         self.selecting_mode = 'unselected'
         
     def _mapParameters(self, face_parameters):
-        self.eyes_gap = face_parameters[0]
-        self.eyes_position = face_parameters[1]
-        self.nose_length = face_parameters[2]
-        self.mouth_position = face_parameters[3]
-
-        
-    def _getSourceRect(self):
-        w, h = 80, 120
-        x0 = (self.eyes_gap-1) * 3 * w + (self.nose_length-1) * w
-        y0 = (self.eyes_position-1) * 3 * h + (self.mouth_position-1) * h
-        
-        return (x0, y0, w, h)
+        pass
     
     def updateRect(self):
-        self.sdl_rect = sdl2.SDL_Rect(int(self.x - self.surface.w/2), \
-                                      int(self.y - self.surface.h/2), \
-                                      int(self.surface.w), \
-                                      int(self.surface.h))
+        self.sdl_rect = sdl2.SDL_Rect(int(self.x - self.w/2), \
+                                      int(self.y - self.h/2), \
+                                      int(self.w), \
+                                      int(self.h))
         
-        self.rect = (int(self.x - self.surface.w/2), \
-                     int(self.y - self.surface.h/2), \
-                     int(self.x + self.surface.w/2), \
-                     int(self.y + self.surface.h/2))
-        
-    def updateFaceSurface(self, faces_surface):
-        rect = self._getSourceRect()
-        self.surface = sdl2.ext.subsurface(faces_surface, rect)
-        sdl2.surface.SDL_SetSurfaceBlendMode(self.surface, sdl2.SDL_BLENDMODE_NONE)
-        sdl2.surface.SDL_SetColorKey(self.surface, sdl2.SDL_TRUE, sdl2.pixels.SDL_MapRGB(self.surface.format, 255, 255, 255))
-
-        sdl2.surface.SDL_SetSurfaceColorMod(self.surface, 200, 200, 200)
-        self.updateRect()
+        self.rect = (int(self.x - self.w/2), \
+                     int(self.y - self.h/2), \
+                     int(self.x + self.w/2), \
+                     int(self.y + self.h/2))
         
     def isMouseOver(self, x, y):
         if self.rect[0] <= x <= self.rect[2] and self.rect[1] <= y <= self.rect[3]:
@@ -95,18 +69,63 @@ class ReedFace(object):
         display.drawSurface(self.surface, self.sdl_rect)
         
         if self.selecting_mode == 'mouse_over':
-            display.drawThickFrame(self.x - self.surface.w/2, \
-                                   self.y - self.surface.h/2, \
-                                   self.x + self.surface.w/2, \
-                                   self.y + self.surface.h/2, \
+            display.drawThickFrame(self.x - self.w/2, \
+                                   self.y - self.h/2, \
+                                   self.x + self.w/2, \
+                                   self.y + self.h/2, \
                                    1)
         if self.selecting_mode == 'selecting':
-            display.drawThickFrame(self.x - self.surface.w/2, \
-                                   self.y - self.surface.h/2, \
-                                   self.x + self.surface.w/2, \
-                                   self.y + self.surface.h/2, \
+            display.drawThickFrame(self.x - self.w/2, \
+                                   self.y - self.h/2, \
+                                   self.x + self.w/2, \
+                                   self.y + self.h/2, \
                                    2)
 
+
+class ReedFace(Stimulus):
+    '''
+    classdocs
+    '''
+        
+    def _mapParameters(self, face_parameters):
+        self.eyes_gap = face_parameters[0]
+        self.eyes_position = face_parameters[1]
+        self.nose_length = face_parameters[2]
+        self.mouth_position = face_parameters[3]
+
+        
+    def _getSourceRect(self):
+        self.w, self.h = 80, 120
+        x0 = (self.eyes_gap-1) * 3 * self.w + (self.nose_length-1) * self.w
+        y0 = (self.eyes_position-1) * 3 * self.h + (self.mouth_position-1) * self.h
+        
+        
+        return (x0, y0, self.w, self.h)
+    
+    def updateStimulusSurface(self, faces_surface):
+        rect = self._getSourceRect()
+        self.surface = sdl2.ext.subsurface(faces_surface, rect)
+        sdl2.surface.SDL_SetSurfaceBlendMode(self.surface, sdl2.SDL_BLENDMODE_NONE)
+        sdl2.surface.SDL_SetColorKey(self.surface, sdl2.SDL_TRUE, sdl2.pixels.SDL_MapRGB(self.surface.format, 255, 255, 255))
+
+        sdl2.surface.SDL_SetSurfaceColorMod(self.surface, 200, 200, 200)
+        self.updateRect()
+        
+class ColorPatch(Stimulus):
+    
+    def _mapParameters(self, rgb):
+        self.r = rgb[0]
+        self.g = rgb[1]
+        self.b = rgb[2]
+        
+    def updateStimulusSurface(self):
+        self.w, self.h = 60, 60
+        self.surface = sdl2.surface.SDL_CreateRGBSurface(0, 60, 60, 32, 0, 0, 0, 0).contents
+        sdl2.ext.fill(self.surface, sdl2.ext.Color(self.r, self.g, self.b))
+
+        self.updateRect()
+        
+        
 class ScaleCandidate(object):
     
     def __init__(self, scale, max_scale = 9):
@@ -124,8 +143,6 @@ class ScaleCandidate(object):
                      int(self.y - self.h/2), \
                      int(self.x + self.w/2), \
                      int(self.y + self.h/2)]
-        
-        print(self.rect, self.scale)
         
     def isMouseOver(self, x, y):
         if self.rect[0] < x <= self.rect[2] and self.rect[1] < y <= self.rect[3]:
@@ -148,6 +165,11 @@ class ScaleCandidate(object):
         else:
             display.drawThickLine(self.x, self.rect[1], self.x, self.rect[3], 2)
             display.drawText('{}'.format(self.scale), self.x, self.rect[3], text_color = (175, 175, 175), align = 'top-center')
+            
+        if self.scale == 1:
+            display.drawText('dissimilar', self.x, self.rect[3] + 40, text_color = (175, 175, 175), align = 'top-center')
+        elif self.scale == self.max_scale:
+            display.drawText('similar', self.x, self.rect[3] + 40, text_color = (175, 175, 175), align = 'top-center')
 
 #     def __del__(self):
 #         sdl2.SDL_FreeSurface(self.surface)
