@@ -1,3 +1,4 @@
+# coding= latin-1
 '''
 Created on 26.09.2016
 
@@ -32,10 +33,9 @@ class ExpParameters(object):
         self.n_multi_compare_practice_trials = 2
         self.n_pair_compare_practice_trials = 4
         
-        
         self.n_break = 10
         
-        self.font_size = 20
+        self.font_size = 36
         
         pass
 
@@ -212,7 +212,7 @@ class ExperimentSession(object):
         self.log('Practice session begins')
         
         self.display.clear()
-        self.display.drawText(u'Mit Leertaste weiter zu den Ãœbungsaufgaben')
+        self.display.drawText(u'Mit Leertaste weiter zu den Übungsaufgaben', font_size=self.exp_parameters.font_size)
         self.display.refresh()
         self.recorder.recordKeyboard(['space'])
         
@@ -220,7 +220,7 @@ class ExperimentSession(object):
         self.log('Test session begins')
         
         self.display.clear()
-        self.display.drawText(u'Mit Leertaste weiter zu den Testaufgaben')
+        self.display.drawText(u'Mit Leertaste weiter zu den Testaufgaben', font_size=self.exp_parameters.font_size)
         self.display.refresh()
         self.recorder.recordKeyboard(['space'])
         self.display.clear(refresh = True)
@@ -229,7 +229,15 @@ class ExperimentSession(object):
         self.log('Session ended')
         
         self.display.clear()
-        self.display.drawText(u'Ende des Experiments: Bitte Versuchsleiter rufen')
+        self.display.drawText(u'Ende des Session: Bitte Versuchsleiter rufen', font_size=self.exp_parameters.font_size)
+        self.display.refresh()
+        self.recorder.recordKeyboard(['space'])
+        
+    def _endExperimentMessage(self):
+        self.log('Session ended')
+        
+        self.display.clear()
+        self.display.drawText(u'Ende des Experiments: Bitte Versuchsleiter rufen', font_size=self.exp_parameters.font_size)
         self.display.refresh()
         self.recorder.recordKeyboard(['space'])
         
@@ -237,7 +245,7 @@ class ExperimentSession(object):
         self.log('Taking a break')
         
         self.display.clear()
-        self.display.drawText(u'Gelegenheit fÃ¼r kurze Pause. Weiter mit Leertaste')
+        self.display.drawText(u'Gelegenheit für kurze Pause. Weiter mit Leertaste', font_size=self.exp_parameters.font_size)
         self.display.refresh()
         self.recorder.recordKeyboard(['space'])
         self.display.clear(refresh = True)
@@ -379,7 +387,7 @@ class MultiComparison(ExperimentSession):
             for l, col in enumerate(row):
                 dist_matrix[i][l] = numpy.mean(col)
         
-        output_file = open('Data\\SimilarityMatrix\\MultiItemsArrangement_{:03d}_{:02d}.dat'.format(pID, session), 'w')
+        output_file = open('Data\\SimilarityMatrix\\MultiItemsArrangement_{:03d}_{:02d}.dat'.format(pID, session), 'a')
         for row in dist_matrix:
             for col in row:
                 output_file.write('{:.3f}\t'.format(col))
@@ -388,7 +396,7 @@ class MultiComparison(ExperimentSession):
         output_file.close()
 
     def _saveTrial(self, pID, session):
-        output_file = open('Data\\TrialsDetail\\MultiItemsArrangement_{:03d}_{:02d}.dat'.format(pID, session), 'w')
+        output_file = open('Data\\TrialsDetail\\MultiItemsArrangement_{:03d}_{:02d}.dat'.format(pID, session), 'a')
         for i, trial in enumerate(self.trials):
             output_file.write('{:d}\t'.format(i))
             for result in trial.result:
@@ -424,7 +432,7 @@ class PairComparison(ExperimentSession):
             if i != 0 and i % int(len(self.trials)/self.exp_parameters.n_break) == 0:
                 self._takingBreak()
             
-        self._endSessionMessage()
+        self._endExperimentMessage()
         
     def constructTrials(self):
         super(PairComparison, self).constructTrials()
@@ -480,7 +488,7 @@ class PairComparison(ExperimentSession):
             dist_matrix[trial.stimulus_index[0]][trial.stimulus_index[1]].append(dist)
             dist_matrix[trial.stimulus_index[1]][trial.stimulus_index[0]].append(dist)
             
-        output_file = open('Data\\SimilarityMatrix\\PairWise_{:03d}_{:02d}.dat'.format(pID, session), 'w')
+        output_file = open('Data\\SimilarityMatrix\\PairWise_{:03d}_{:02d}.dat'.format(pID, session), 'a')
         for row in dist_matrix:
             for col in row:
                 if col:
@@ -492,7 +500,7 @@ class PairComparison(ExperimentSession):
         output_file.close()
         
     def _saveTrial(self, pID, session):
-        output_file = open('Data\\TrialsDetail\\PairWise_{:03d}_{:02d}.dat'.format(pID, session), 'w')
+        output_file = open('Data\\TrialsDetail\\PairWise_{:03d}_{:02d}.dat'.format(pID, session), 'a')
         for i, trial in enumerate(self.trials):
             output_file.write('{:d}\t'.format(i))
             output_file.write('{:d}\t{:d}\t{:d}\n'.format(trial.stimulus_index[0], trial.stimulus_index[1], trial.response))

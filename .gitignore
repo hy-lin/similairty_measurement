@@ -1,3 +1,6 @@
 *.dat
 *.pyc
 *.dat
+*.pyc
+Experiments/Experiment 1/src/__pycache__/Display.cpython-35.pyc
+*.pyc

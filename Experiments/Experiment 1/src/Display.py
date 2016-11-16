@@ -1,3 +1,4 @@
+# coding= latin-1
 '''
 Created on 23.04.2015
 
@@ -42,7 +43,7 @@ class Display(object):
         
         sdl2.sdlttf.TTF_Init()
         self.font = None
-        self.font_size = 20
+        self.font_size = self.exp_parameters.font_size
         
         self.running = True
     
@@ -76,9 +77,6 @@ class Display(object):
         sdl2.sdlgfx.thickLineRGBA(self.renderer.renderer, x0, y1, x1, y1, thickness, color.r, color.g, color.b, color.a)
         
     def getString(self, recorder, display_text, x = None, y = None, text_color = sdl2.SDL_Color(0, 0, 0)):
-        if self.font is None:
-            self.font = sdl2.sdlttf.TTF_OpenFont(self.RESOURCES.get_path('one47.ttf').encode(), int(self.exp_parameters.font_size))
-            
         if x is None:
             x = self.window_surface.w/2
         if y is None:
@@ -88,18 +86,21 @@ class Display(object):
         input_string = ''
         
         self.clear()
-        self.drawText(display_text + input_string, x, y, align = 'top-left')
+        self.drawText(display_text + input_string, x, y, align = 'top-left', font_size = self.font_size)
         self.refresh()
         
         while not entered:
-            input_char, _ = recorder.recordKeyboard([b'0', b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'Return'])
+            input_char, _ = recorder.recordKeyboard([b'0', b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'Return', b'Backspace'])
             if input_char <= 9:
                 input_string += str(input_char)
             elif input_char == 10:
                 entered = True
+            elif input_char == 11:
+                if len(input_string) != 0:
+                    input_string = input_string[:-1]
             
             self.clear()
-            self.drawText(display_text + input_string, x, y, align = 'top-left')
+            self.drawText(display_text + input_string, x, y, align = 'top-left', font_size = self.font_size)
             self.refresh()
             sdl2.sdlgfx.SDL_framerateDelay(self.fps)
             
@@ -111,14 +112,14 @@ class Display(object):
             text_color = sdl2.SDL_Color(text_color[0], text_color[1], text_color[2])
         
         if self.font is None or self.font_size != font_size:
-            self.font = sdl2.sdlttf.TTF_OpenFont(self.RESOURCES.get_path('one47.ttf').encode(), int(font_size))
+            self.font = sdl2.sdlttf.TTF_OpenFont(self.RESOURCES.get_path('TheanoModern-Regular.ttf').encode(), int(font_size))
             self.font_size = font_size
             
         if x is None:
             x = self.window_surface.w/2
         if y is None:
             y = self.window_surface.h/2
-        msg = sdl2.sdlttf.TTF_RenderText_Solid(self.font, text.encode(), text_color)
+        msg = sdl2.sdlttf.TTF_RenderText_Solid(self.font, text.encode('latin_1'), text_color)
         
         if align == 'center-center':
             msg_rect = sdl2.SDL_Rect(int(x-msg.contents.w/2), int(y-msg.contents.h/2), msg.contents.w, msg.contents.h)
