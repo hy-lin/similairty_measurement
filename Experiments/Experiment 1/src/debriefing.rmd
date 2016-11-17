@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Please make sure your participant ID is correct in order to load your data file. 
 ```{r input.pID}
-pID <- 999
+pID <- 123
 ```
 Really, check your participant ID.
 
