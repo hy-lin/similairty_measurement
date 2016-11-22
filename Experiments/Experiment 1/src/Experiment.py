@@ -51,9 +51,14 @@ class MultiComparisonTrials(object):
             
     def run(self, display, recorder):
         self._resetStimulusPosition(display)
+        
+        st = recorder.getTicks()
+        
         display.wait(300)
         self._getResponse(display, recorder)
         self._recordResponse()
+        
+        self.t = recorder.getTicks() - st
         
         display.clear(True)
         display.wait(1000)
@@ -154,9 +159,11 @@ class PairComparisonTrial(object):
         self.scale_candidates = scale_candidates
             
     def run(self, display, recorder):
+        st = recorder.getTicks()
         self._resetStimulusPosition(display)
         self._getResponse(display, recorder)
         display.clear(True)
+        self.t = recorder.getTicks() - st
         display.wait(1000)
         
     def _getResponse(self, display, recorder):
@@ -401,6 +408,8 @@ class MultiComparison(ExperimentSession):
             output_file.write('{:d}\t'.format(i))
             for result in trial.result:
                 output_file.write('{:d}\t{:d}\t{:d}\t'.format(result[0], result[1], result[2]))
+                
+            output_file.write('{:d}\t'.format(trial.t))
             output_file.write('\n')
             
         output_file.close()
@@ -503,7 +512,10 @@ class PairComparison(ExperimentSession):
         output_file = open('Data\\TrialsDetail\\PairWise_{:03d}_{:02d}.dat'.format(pID, session), 'a')
         for i, trial in enumerate(self.trials):
             output_file.write('{:d}\t'.format(i))
-            output_file.write('{:d}\t{:d}\t{:d}\n'.format(trial.stimulus_index[0], trial.stimulus_index[1], trial.response))
+            output_file.write('{:d}\t{:d}\t{:d}\t'.format(trial.stimulus_index[0], trial.stimulus_index[1], trial.response))
+            output_file.write('{:d}\t'.format(trial.t))
+            output_file.write('\n')
+
         output_file.close()
     
 class Experiment(object):

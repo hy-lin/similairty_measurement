@@ -3,8 +3,8 @@ title: "Debriefing"
 author: "Hsuan-Yu Lin"
 date: "8 November 2016"
 output: html_document
-bibliography: bibliography.bib
-csl: apa-annotated-bibliography.csl
+bibliography: resources/bibliography.bib
+csl: resources/apa-annotated-bibliography.csl
 ---
 
 
@@ -67,8 +67,8 @@ In this experiment, we presetned $8$ items at once, so the total number of trial
 (16*2/8) * (16*2/8 - 1) / 2
 ```
 
-## Your Result
-Here we show you the result from your response.
+## Experiment Result
+Here we show you the result from one of our experimenters' response. Because of some technical difficulty, we can't generated your result immediently. We will e-mail you your result later. 
 
 ### Multi-Items Arrangement
 ``` {r prepare.plot.multi.item.arrangement.result, echo=FALSE}

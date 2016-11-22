@@ -108,6 +108,9 @@ class Recorder(object):
                     pressed = sdl2.keyboard.SDL_GetKeyName(event.key.keysym.sym)
                 if pressed in acceptable_keys:
                     return pressed
+                
+    def getTicks(self):
+        return sdl2.timer.SDL_GetTicks()
     
     def recordKeyboard(self, acceptable_keys):
         running = True
