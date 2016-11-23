@@ -106,6 +106,7 @@ class Recorder(object):
                     pressed = 'space'
                 else:
                     pressed = sdl2.keyboard.SDL_GetKeyName(event.key.keysym.sym)
+                    print(pressed)
                 if pressed in acceptable_keys:
                     return pressed
                 
@@ -128,6 +129,7 @@ class Recorder(object):
                         pressed = 'space'
                     else:
                         pressed = sdl2.keyboard.SDL_GetKeyName(event.key.keysym.sym)
+
                     if pressed in acceptable_keys:
                         return acceptable_keys.index(pressed), sdl2.timer.SDL_GetTicks() - t0
     

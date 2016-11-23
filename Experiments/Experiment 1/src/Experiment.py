@@ -238,7 +238,7 @@ class ExperimentSession(object):
         self.display.clear()
         self.display.drawText(u'Ende des Session: Bitte Versuchsleiter rufen', font_size=self.exp_parameters.font_size)
         self.display.refresh()
-        self.recorder.recordKeyboard(['space'])
+        self.recorder.recordKeyboard([b'K'])
         
     def _endExperimentMessage(self):
         self.log('Session ended')
