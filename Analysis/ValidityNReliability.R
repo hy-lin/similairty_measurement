@@ -45,15 +45,17 @@ getValidityNReliability <- function(exp, pID){
   return(c(validity$r, validity$p, reliability.pair$r, reliability.pair$p, reliability.multi$r, reliability.multi$p))
 }
 
-
-exp = 2
-participants <- c(1, 2, 3, 4, 5, 6, 7, 8, 9)
-
-data <- matrix(data = NA, nrow = length(participants), ncol = 7)
-for (pID in participants){
-  data[pID,] <- c(pID, getValidityNReliability(exp, pID))
+getData <- function(exp, participants){
+  data <- matrix(data = NA, nrow = length(participants), ncol = 7)
+  for (pID in participants){
+    data[pID,] <- c(pID, getValidityNReliability(exp, pID))
+  }
+  data <- data.frame(data)
+  names(data) <- c('ID', 'Validity_R', 'Validity_P', 'Reliability_Pair_R', 'Reliability_Pair_P', 'Reliability_Multi_R', 'Reliability_Multi_P')
+  data$ID <- factor(data$ID)
+  
+  return(data)
 }
-data <- data.frame(data)
-names(data) <- c('ID', 'Validity_R', 'Validity_P', 'Reliability_Pair_R', 'Reliability_Pair_P', 'Reliability_Multi_R', 'Reliability_Multi_P')
-data$ID <- factor(data$ID)
-summary(data)
+
+exp1.data <- getData(1, c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+exp2.data <- getData(2, c(1, 2, 3, 4, 5, 6, 7, 8, 9))

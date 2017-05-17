@@ -1,0 +1,11 @@
+Naming:
+PairWise_$pID$_$Session$.dat
+$pID$: Participant Index (1-10)
+$Session$: Session Index (1-2)
+
+Columns: 
+1: Trial index
+2: Item index on the left (0-15)
+3: Item index on the right (0-15)
+4: Similarity rating (1-9; 1 = most similar; 9 = most dissimilar)
+5: RT (in ms)
