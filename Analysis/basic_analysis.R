@@ -1,4 +1,5 @@
 # importing stuff
+library(phytools)
 
 
 loadSimilarityMatrix <- function(exp, pID, session, task){
@@ -26,22 +27,33 @@ vec.cos <- function(v1, v2){
 getValidityNReliability <- function(exp, pID){
   matrix1 <- loadSimilarityMatrix(exp, pID, 1, 'pair')
   matrix2 <- loadSimilarityMatrix(exp, pID, 2, 'pair')
-  reliability.pair <- 1 - vec.cos(as.vector(matrix1), as.vector(matrix2))
+#  reliability.pair <- 1 - vec.cos(as.vector(matrix1), as.vector(matrix2))
+  reliability.pair <- skewers(matrix1, matrix2)
   
   pair_matrix <- (matrix1+matrix2)/2
   
   matrix1 <- loadSimilarityMatrix(exp, pID, 1, 'multi')
   matrix2 <- loadSimilarityMatrix(exp, pID, 2, 'multi')
-  reliability.multi <- 1 - vec.cos(as.vector(matrix1), as.vector(matrix2))
+#  reliability.multi <- 1 - vec.cos(as.vector(matrix1), as.vector(matrix2))
+  reliability.multi <- skewers(matrix1, matrix2)
   
   multi_matrix <- (matrix1+matrix2)/2
   
-  validity <- 1 - vec.cos(as.vector(pair_matrix), as.vector(multi_matrix))
-  return(c(validity, reliability.pair, reliability.multi))
+#  validity <- 1 - vec.cos(as.vector(pair_matrix), as.vector(multi_matrix))
+  validity <- skewers(multi_matrix, pair_matrix)
+  
+  return(c(validity$r, validity$p, reliability.pair$r, reliability.pair$p, reliability.multi$r, reliability.multi$p))
 }
 
-exp = 1
-data <- matrix(data = NA, nrow = 10, ncol = 3)
-for (pID in c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)){
-  data[pID,] <- getValidityNReliability(exp, pID)
+
+exp = 2
+participants <- c(1, 2, 3, 4, 5, 6, 7, 8, 9)
+
+data <- matrix(data = NA, nrow = length(participants), ncol = 7)
+for (pID in participants){
+  data[pID,] <- c(pID, getValidityNReliability(exp, pID))
 }
+data <- data.frame(data)
+names(data) <- c('ID', 'Validity_R', 'Validity_P', 'Reliability_Pair_R', 'Reliability_Pair_P', 'Reliability_Multi_R', 'Reliability_Multi_P')
+data$ID <- factor(data$ID)
+summary(data)
