@@ -1,5 +1,5 @@
 Naming:
-PairWise_$pID$_$Session$.dat
+MultiItemArrangement_$pID$_$Session$.dat
 $pID$: Participant Index (1-9)
 $Session$: Session Index (1-2)
 
