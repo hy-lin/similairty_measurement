@@ -17,7 +17,21 @@ import sdl2.timer
 
 class Display(object):
     '''
-    classdocs
+    The main display interface for SDL2.
+    All color in the function allows a triple as r,g,b values
+
+    functions:
+        clear(self, refresh = False)
+        refresh(self)
+        wait(self, ms)
+        waitFPS(self)   Wait until next frame update
+        drawThickLine(self, x0, y0, x1, y1, thickness, color=sdl2.ext.Color(0, 0, 0))
+        drawThickFrame(self, x0, y0, x1, y1, thickness, color=sdl2.ext.Color(0, 0, 0))
+        drawFilledRect(self, x0, y0, x1, y1, color)
+        getStimulusRect(self, position)
+        getString(self, recorder, display_text, x=None, y=None, text_color=sdl2.SDL_Color(0, 0, 0))
+        drawText(self, text, x=None, y=None, text_color=sdl2.SDL_Color(0, 0, 0), align='center-center', font_size=60)
+        drawSurface(self, src_surface, dst_rect)
     '''
 
 

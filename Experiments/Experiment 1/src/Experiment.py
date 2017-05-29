@@ -40,6 +40,12 @@ class ExpParameters(object):
         pass
 
 class MultiComparisonTrials(object):
+    '''
+    This is the single trial for Multi-Items Rearrangement task. 
+    The trial requires the index for all the items and the
+    sprites pool. The sprites are not assigned until setupStimulus
+    function is called.
+    '''
     def __init__(self, stimulus_index):
         self.stimulus_index = stimulus_index
         self.stimulus = []
@@ -144,6 +150,12 @@ class MultiComparisonTrials(object):
         return min_x, min_y, max_x, max_y
                     
 class PairComparisonTrial(object):
+    '''
+    A trial for Pair-Comparison task. The trial requires the index of items
+    and the sprites pool. The sprites of items are not assigned until
+    setupStimulus function is called.
+    '''
+
     def __init__(self, stimulus_index):
         self.stimulus_index = stimulus_index
     
@@ -189,6 +201,10 @@ class PairComparisonTrial(object):
             display.refresh()
             
 class ExperimentSession(object):
+    '''
+    The prototype class for an experiment session. 
+    '''
+
     def __init__(self, exp_parameters, display, recorder, RESOURCES):
         '''
         Constructor
@@ -219,7 +235,7 @@ class ExperimentSession(object):
         self.log('Practice session begins')
         
         self.display.clear()
-        self.display.drawText(u'Mit Leertaste weiter zu den Übungsaufgaben', font_size=self.exp_parameters.font_size)
+        self.display.drawText(u'Mit Leertaste weiter zu den ï¿½bungsaufgaben', font_size=self.exp_parameters.font_size)
         self.display.refresh()
         self.recorder.recordKeyboard(['space'])
         
@@ -252,7 +268,7 @@ class ExperimentSession(object):
         self.log('Taking a break')
         
         self.display.clear()
-        self.display.drawText(u'Gelegenheit für kurze Pause. Weiter mit Leertaste', font_size=self.exp_parameters.font_size)
+        self.display.drawText(u'Gelegenheit fï¿½r kurze Pause. Weiter mit Leertaste', font_size=self.exp_parameters.font_size)
         self.display.refresh()
         self.recorder.recordKeyboard(['space'])
         self.display.clear(refresh = True)

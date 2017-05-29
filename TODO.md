@@ -1,7 +1,8 @@
 Write the paper, holy shit, write the paper.
     1. Experiments & analysis.
         - -Method-
-        - Analysis
+        - Figure of stimulus (with index).
+        - Analysis: half done. 
     2. Introduction.
         - What's the problem with traditional tasks
         - What's the new task
@@ -14,9 +15,10 @@ Write the paper, holy shit, write the paper.
 Data analysis
     1. -Learn how to analysis coeverience matrix.-
     2. -AND DO IT.-
-    3. reliability and validity test.
+    3. -reliability and validity test.-
         - -Time required.-
         - -Reliability-
         - -Validity-
 
 Setup OSF for the paper.
+    - I think there is a way to link Github to OSF.
