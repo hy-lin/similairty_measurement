@@ -1,4 +1,5 @@
 Write the paper, holy shit, write the paper.
+
     1. Experiments & analysis.
         * ~~Method~~
         * Figure of stimulus (with index).
@@ -13,6 +14,7 @@ Write the paper, holy shit, write the paper.
         * The adventage and disadventage of the new task.
 
 Data analysis
+
     1. ~~Learn how to analysis coeverience matrix.~~
     2. ~~AND DO IT.~~
     3. ~~reliability and validity test.~~
@@ -21,6 +23,7 @@ Data analysis
         * ~~Validity.~~
 
 Miscs:
+
     1. Setup OSF for the paper.
         * I think there is a way to link Github to OSF.
     2. Move Participant 10's data from server to local.
