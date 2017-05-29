@@ -28,19 +28,19 @@ getValidityNReliability <- function(exp, pID){
   matrix1 <- loadSimilarityMatrix(exp, pID, 1, 'pair')
   matrix2 <- loadSimilarityMatrix(exp, pID, 2, 'pair')
 #  reliability.pair <- 1 - vec.cos(as.vector(matrix1), as.vector(matrix2))
-  reliability.pair <- skewers(matrix1, matrix2)
+  reliability.pair <- skewers(matrix1, matrix2, method = 'unifcorrmat')
   
   pair_matrix <- (matrix1+matrix2)/2
   
   matrix1 <- loadSimilarityMatrix(exp, pID, 1, 'multi')
   matrix2 <- loadSimilarityMatrix(exp, pID, 2, 'multi')
 #  reliability.multi <- 1 - vec.cos(as.vector(matrix1), as.vector(matrix2))
-  reliability.multi <- skewers(matrix1, matrix2)
+  reliability.multi <- skewers(matrix1, matrix2, method = 'unifcorrmat')
   
   multi_matrix <- (matrix1+matrix2)/2
   
 #  validity <- 1 - vec.cos(as.vector(pair_matrix), as.vector(multi_matrix))
-  validity <- skewers(multi_matrix, pair_matrix)
+  validity <- skewers(multi_matrix, pair_matrix, method = 'unifcorrmat')
   
   return(c(validity$r, validity$p, reliability.pair$r, reliability.pair$p, reliability.multi$r, reliability.multi$p))
 }

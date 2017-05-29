@@ -34,7 +34,7 @@ plotMDS <- function(exp, participants){
   multi.y = multi_loc[, 2] * multi.scale
   
   plot(multi.x, multi.y, type = 'n', xlim = c(-1, 1), ylim = c(-1, 1))
-  text(multi.x, multi.y, colnames(multi_matrix), cex=.6, col = 'black')
+  text(multi.x, multi.y, seq(1, 16), cex=.6, col = 'black')
   
   pair_loc <- cmdscale(pair_matrix)
   pair.scale <- 1.5/(max(pair_loc)-min(pair_loc))
@@ -45,7 +45,7 @@ plotMDS <- function(exp, participants){
   pair.y <- pair.y * sign(pair.y[1] * multi.y[1])
   
   #plot(pair.x, pair.y, type = 'n', xlim = c(-1, 1), ylim = c(-1, 1))
-  text(pair.x, pair.y, colnames(pair_matrix), cex=.6, col = 'red')
+  text(pair.x, pair.y, seq(1, 16), cex=.6, col = 'red')
 }
 
 plotMDS(1, c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
