@@ -6,6 +6,6 @@ $Session$: Session Index (1-2)
 Columns:
 1: Trial index (0-11)
 2, 5, 8, 11, 14, 17, 20, 23: Item index (0-15)
-3, 6, 9, 12, 15, 18, 21, 24: x coordiance (0-1280) (double check)
-4, 7, 10, 13, 16, 19, 22, 25: y coordiance (0-720) (double check)
+3, 6, 9, 12, 15, 18, 21, 24: x coordiance (0-1280)
+4, 7, 10, 13, 16, 19, 22, 25: y coordiance (0-1024)
 26: RT (in ms)
