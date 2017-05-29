@@ -1,0 +1,5 @@
+The similarity matrix measured by Multi-Items Rearrangement task.
+Each cell ranges from 0-1640, which indicates the euclidean distance
+measured between the items at the current row and column. Since the
+particpants were instructed to put similar items closer together,
+the larger the number is, the more dissimilar between two items.

@@ -1,0 +1,4 @@
+The similarity matrix measured by Pair-wised Comparison task.
+Each cell ranges from 0-8, which indicates the dissimilarity between
+the items at the current row and column. The larger the number is,
+the more dissimilar between two items.
