@@ -55,6 +55,8 @@ getData <- function(exp, participants, task){
     data$Item7 <- factor(data$Item7)
     data$Item8 <- factor(data$Item8)
   }
+  
+  data$RT <- data$RT/1000
   return(data)
 }
 
@@ -68,5 +70,16 @@ exp1.RT <- exp1.RT.multi
 exp1.RT[, 3] <- exp1.RT.pair[, 2]
 names(exp1.RT) <- c('ID', 'MultiRT', 'PairRT')
 
-samples = ttestBF(exp1.RT$MultiRT - exp1.RT$PairRT, posterior = TRUE, iterations = 1000)
+summary(exp1.RT)
+ttestBF(exp1.RT$PairRT - exp1.RT$MultiRT)
+samples = ttestBF(exp1.RT$PairRT - exp1.RT$MultiRT, posterior = TRUE, iterations = 1000)
 plot(samples[, 'mu'])
+
+exp1.RT.pair <- data.frame(aggregate(list(exp1.pair.data$RT), list(exp1.pair.data$ID), mean))
+exp1.RT.multi <- data.frame(aggregate(list(exp1.multi.data$RT), list(exp1.multi.data$ID), mean))
+
+exp1.RT <- exp1.RT.multi
+exp1.RT[, 3] <- exp1.RT.pair[, 2]
+names(exp1.RT) <- c('ID', 'MultiRT', 'PairRT')
+
+summary(exp1.RT)
