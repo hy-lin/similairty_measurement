@@ -1,9 +1,22 @@
 Write the paper, holy shit, write the paper.
 
 1. Experiments & analysis.
-  - ~~Method~~
-  - Figure of stimulus (with index).
-  - Analysis: half done. 
+  1. Experiment 1.
+    - ~~Method~~
+    - Figure of stimulus (with index).
+    - Analysis:
+      1. ~~Reliability~~
+      2. ~~Validability~~
+      3. ~~MDS.~~
+      4. Duration
+  2. Experiment 2.
+    - Method.
+    - Figure of stimulus.
+    - Analysis:
+      1. Reliability
+      2. Validability
+      3. MDS.
+      4. Duration
 2. Introduction.
   - What's the problem with traditional tasks
   - What's the new task
