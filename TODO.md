@@ -39,6 +39,6 @@ Miscs:
 
 1. Setup OSF for the paper.
   - I think there is a way to link Github to OSF.
-2. Move Participant 10's data from server to local.
+2. ~~Move Participant 10's data from server to local.~~
 3. Document the code, maybe?
   - At least document the data.
