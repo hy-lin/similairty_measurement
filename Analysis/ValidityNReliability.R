@@ -58,4 +58,4 @@ getData <- function(exp, participants){
 }
 
 exp1.data <- getData(1, c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
-exp2.data <- getData(2, c(1, 2, 3, 4, 5, 6, 7, 8, 9))
+exp2.data <- getData(2, c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))

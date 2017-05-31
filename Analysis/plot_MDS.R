@@ -49,4 +49,4 @@ plotMDS <- function(exp, participants){
 }
 
 plotMDS(1, c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
-# plotMDS(2, c(1, 2, 3, 4, 5, 6, 7, 8, 9))
+plotMDS(2, c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))

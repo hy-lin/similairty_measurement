@@ -75,11 +75,19 @@ ttestBF(exp1.RT$PairRT - exp1.RT$MultiRT)
 samples = ttestBF(exp1.RT$PairRT - exp1.RT$MultiRT, posterior = TRUE, iterations = 1000)
 plot(samples[, 'mu'])
 
-exp1.RT.pair <- data.frame(aggregate(list(exp1.pair.data$RT), list(exp1.pair.data$ID), mean))
-exp1.RT.multi <- data.frame(aggregate(list(exp1.multi.data$RT), list(exp1.multi.data$ID), mean))
 
-exp1.RT <- exp1.RT.multi
-exp1.RT[, 3] <- exp1.RT.pair[, 2]
-names(exp1.RT) <- c('ID', 'MultiRT', 'PairRT')
 
-summary(exp1.RT)
+exp2.pair.data <- getData(2, c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), 'pair')
+exp2.multi.data <- getData(2, c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), 'multi')
+
+exp2.RT.pair <- data.frame(aggregate(list(exp2.pair.data$RT), list(exp2.pair.data$ID), sum))
+exp2.RT.multi <- data.frame(aggregate(list(exp2.multi.data$RT), list(exp2.multi.data$ID), sum))
+
+exp2.RT <- exp2.RT.multi
+exp2.RT[, 3] <- exp2.RT.pair[, 2]
+names(exp2.RT) <- c('ID', 'MultiRT', 'PairRT')
+
+summary(exp2.RT)
+ttestBF(exp2.RT$PairRT - exp2.RT$MultiRT)
+samples = ttestBF(exp1.RT$PairRT - exp1.RT$MultiRT, posterior = TRUE, iterations = 1000)
+plot(samples[, 'mu'])

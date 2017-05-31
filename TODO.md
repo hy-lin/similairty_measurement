@@ -1,22 +1,22 @@
 Write the paper, holy shit, write the paper.
 
-1. Experiments & analysis.
-  1. Experiment 1.
+1. ~~Experiments & analysis.~~
+  1. ~~Experiment 1.~~
     - ~~Method~~
     - ~~Figure of stimulus (with index).~~
-    - Analysis:
+    - ~~Analysis:~~
       1. ~~Reliability~~
       2. ~~Validability~~
       3. ~~MDS.~~
       4. ~~Duration~~
-  2. Experiment 2.
-    - Method.
+  2. ~~Experiment 2.~~
+    - ~~Method.~~
     - ~~Figure of stimulus.~~
-    - Analysis:
-      1. Reliability
-      2. Validability
-      3. MDS.
-      4. Duration
+    - ~~Analysis:~~
+      1. ~~Reliability~~
+      2. ~~Validability~~
+      3. ~~MDS.~~
+      4. ~~Duration~~
 2. Introduction.
   - What's the problem with traditional tasks
   - What's the new task
@@ -26,7 +26,7 @@ Write the paper, holy shit, write the paper.
   - The reliability and validity of the new task.
   - The adventage and disadventage of the new task.
 
-Data analysis
+~~Data analysis~~
 
 1. ~~Learn how to analysis coeverience matrix.~~
 2. ~~AND DO IT.~~
