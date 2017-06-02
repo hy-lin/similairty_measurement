@@ -18,13 +18,19 @@ Write the paper, holy shit, write the paper.
       3. ~~MDS.~~
       4. ~~Duration~~
 2. Introduction.
-  - What's the problem with traditional tasks
+  - ~~What's the problem with traditional tasks~~
   - What's the new task
   - How to select the items set
   - The adventage of the new task over the old tasks
 3. Discussion. 
   - The reliability and validity of the new task.
   - The adventage and disadventage of the new task.
+  - Adventage:
+    - Fewer number of trials
+    - Shorter time
+    - Complete similarity matrix (comparing to incomplete similarity matrix)
+  - Disadventage:
+    - Comparison is limited in two dimensions. Some similarity matrix requires higher number of dimensions.
 
 ~~Data analysis~~
 
@@ -42,3 +48,4 @@ Miscs:
 2. ~~Move Participant 10's data from server to local.~~
 3. Document the code, maybe?
   - At least document the data.
+4. redraw the MDS figures.
