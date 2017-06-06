@@ -19,8 +19,8 @@ Write the paper, holy shit, write the paper.
       4. ~~Duration~~
 2. Introduction.
   - ~~What's the problem with traditional tasks~~
-  - What's the new task
-  - How to select the items set
+  - ~~What's the new task~~
+  - ~~How to select the items set~~
   - The adventage of the new task over the old tasks
 3. Discussion. 
   - The reliability and validity of the new task.

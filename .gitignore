@@ -1,4 +1,6 @@
 *.pyc
+*.tmp
 Experiments/Experiment 1/build
 Experiments/Experiment 1/dist
-Experiments/Experiment 1/src/debriefing.html
+Experiments/Experiment 2/build
+Experiments/Experiment 2/dist
