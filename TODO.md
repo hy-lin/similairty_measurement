@@ -21,7 +21,7 @@ Write the paper, holy shit, write the paper.
   - ~~What's the problem with traditional tasks~~
   - ~~What's the new task~~
   - ~~How to select the items set~~
-  - The adventage of the new task over the old tasks
+  - ~~The adventage of the new task over the old tasks~~
 3. Discussion. 
   - The reliability and validity of the new task.
   - The adventage and disadventage of the new task.
@@ -31,6 +31,7 @@ Write the paper, holy shit, write the paper.
     - Complete similarity matrix (comparing to incomplete similarity matrix)
   - Disadventage:
     - Comparison is limited in two dimensions. Some similarity matrix requires higher number of dimensions.
+4. Review
 
 ~~Data analysis~~
 
