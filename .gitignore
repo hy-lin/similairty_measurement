@@ -1,5 +1,6 @@
 *.pyc
 *.tmp
+*~*
 Experiments/Experiment 1/build
 Experiments/Experiment 1/dist
 Experiments/Experiment 2/build
