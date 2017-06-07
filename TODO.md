@@ -24,7 +24,6 @@ Write the paper, holy shit, write the paper.
   - ~~The adventage of the new task over the old tasks~~
 3. Discussion. 
   - ~~The reliability and validity of the new task.~~
-  - The adventage and disadventage of the new task.
   - Adventage:
     - Fewer number of trials
     - Shorter time
