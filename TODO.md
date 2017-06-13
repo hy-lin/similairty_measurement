@@ -24,12 +24,13 @@ Write the paper, holy shit, write the paper.
   - ~~The adventage of the new task over the old tasks~~
 3. Discussion. 
   - ~~The reliability and validity of the new task.~~
-  - Adventage:
-    - Fewer number of trials
-    - Shorter time
-    - Complete similarity matrix (comparing to incomplete similarity matrix)
+  - ~~Adventage:~~
+    - ~~Fewer number of trials~~
+    - ~~Shorter time~~
+    - ~~Complete similarity matrix (comparing to incomplete similarity matrix)~~
   - Disadventage:
-    - Comparison is limited in two dimensions. Some similarity matrix requires higher number of dimensions.
+    - ~~Comparison is limited in two dimensions. Some similarity matrix requires higher number of dimensions.~~
+  - Close the paper. 
 4. Review
 
 ~~Data analysis~~
